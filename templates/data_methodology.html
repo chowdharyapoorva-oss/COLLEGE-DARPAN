@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block title %}Data Sources & Verification Methodology — College Darpan{% endblock %}
+
+{% block content %}
+<div class="container container-narrow" style="margin-top: 2.5rem; margin-bottom: 4rem;">
+
+  <!-- Header Banner -->
+  <div style="text-align: center; margin-bottom: 3rem;">
+    <span class="badge badge-verified" style="margin-bottom: 0.5rem;">Institutional Transparency Standard</span>
+    <h1 style="font-size: 2.4rem; color: var(--navy-heading); margin-bottom: 0.5rem;">
+      Data Sources & Verification Methodology
+    </h1>
+    <p style="color: var(--text-muted); font-size: 1.05rem;">
+      How College Darpan audits tuition fees, accreditation status, admission cutoffs, and placements across Telangana educational institutions.
+    </p>
+  </div>
+
+  <!-- Live Database Verification Metrics -->
+  <div class="card" style="background: var(--hero-gradient); border: 2px solid var(--border-color); padding: 1.75rem; margin-bottom: 2.5rem;">
+    <div style="font-size: 0.85rem; font-weight: 700; color: var(--navy-heading); text-transform: uppercase; margin-bottom: 1rem;">
+      Current Directory Source Status
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; text-align: center;">
+      <div style="background: #FFFFFF; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1rem;">
+        <div style="font-size: 1.6rem; font-weight: 800; color: #DB2777;">{{ stats.colleges_count }}</div>
+        <div style="font-size: 0.75rem; color: var(--text-muted);">Institutions listed</div>
+      </div>
+      <div style="background: #FFFFFF; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1rem;">
+        <div style="font-size: 1.6rem; font-weight: 800; color: #0284C7;">{{ stats.polytechnic_count }} / {{ stats.engineering_count }} / {{ stats.pharmacy_count }}</div>
+        <div style="font-size: 0.75rem; color: var(--text-muted);">Poly / B.Tech / Pharma</div>
+      </div>
+      <div style="background: #FFFFFF; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1rem;">
+        <div style="font-size: 1.6rem; font-weight: 800; color: #1E6B47;">{{ stats.verified_placements }}</div>
+        <div style="font-size: 0.75rem; color: var(--text-muted);">Placement rows tagged verified</div>
+      </div>
+      <div style="background: #FFFFFF; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1rem;">
+        <div style="font-size: 1.6rem; font-weight: 800; color: #6D28D9;">{{ stats.source_linked_count }}</div>
+        <div style="font-size: 0.75rem; color: var(--text-muted);">Listings with source and year</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 1: What current verification covers -->
+  <div class="card" style="padding: 2.25rem; margin-bottom: 2rem; border-top: 4px solid var(--pastel-pink);">
+    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+      <div style="width: 44px; height: 44px; border-radius: 12px; background: var(--blush-pink); color: #9D174D; display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">
+        🛡️
+      </div>
+      <div>
+        <h2 style="font-size: 1.4rem; color: var(--navy-heading);">What the current verification covers</h2>
+        <span style="font-size: 0.8rem; color: var(--text-muted);">Institution listing is separate from programme and outcome verification</span>
+      </div>
+    </div>
+
+    <p style="color: var(--text-main); font-size: 0.95rem; line-height: 1.7; margin-bottom: 1rem;">
+      Commercial educational portals frequently display exaggerated placement statistics, unverified packages, or fabricated cutoff ranks to promote private advertisers.
+    </p>
+    <p style="color: var(--text-main); font-size: 0.95rem; line-height: 1.7;">
+      New SBTET directory entries include a direct source URL, academic year, and a verification status for the institution listing. This does not verify fees, programmes, cutoffs, placements, or other metrics. Existing imported records keep their previous status and still need a field-by-field review. Missing data should be treated as unavailable.
+    </p>
+  </div>
+
+  <!-- Section 2: Authoritative Regulatory Sources -->
+  <div class="card" style="padding: 2.25rem; margin-bottom: 2rem; border-top: 4px solid var(--pastel-blue);">
+    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
+      <div style="width: 44px; height: 44px; border-radius: 12px; background: var(--sky-blue); color: #0369A1; display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">
+        🏛️
+      </div>
+      <div>
+        <h2 style="font-size: 1.4rem; color: var(--navy-heading);">Primary Government & Regulatory Sources</h2>
+        <span style="font-size: 0.8rem; color: var(--text-muted);">Where our institutional records originate</span>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+      <!-- Source 1: TAFRC -->
+      <div style="background: var(--bg-color); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.25rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+          <strong style="color: #0369A1; font-size: 1.05rem;">1. Telangana Admission and Fee Regulatory Committee (TAFRC)</strong>
+          <span class="badge badge-needs-verification">Not audited in this update</span>
+        </div>
+        <p style="font-size: 0.875rem; color: var(--text-main); line-height: 1.6;">
+          TAFRC is a primary source for regulated fee notices. This update did not import or re-verify fee values. Check the current notice for the institution and academic year before relying on a fee figure. <a href="https://tafrc.telangana.gov.in/" target="_blank" rel="noopener">Open TAFRC</a>.
+        </p>
+      </div>
+
+      <!-- Source 2: SBTET -->
+      <div style="background: var(--bg-color); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.25rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+          <strong style="color: #0369A1; font-size: 1.05rem;">2. State Board of Technical Education & Training (SBTET Telangana)</strong>
+          <span class="badge badge-verified">Institution names, 2026–27</span>
+        </div>
+        <p style="font-size: 0.875rem; color: var(--text-main); line-height: 1.6;">
+          The added directory names are listed in the SBTET LPCET 2026–27 booklet. We did not infer programme availability or intake from these names. <a href="https://sbtet.telangana.gov.in/downloads/Circular/LPCET%202026%20Booklet.pdf" target="_blank" rel="noopener">Open the official booklet</a>.
+        </p>
+      </div>
+
+      <!-- Source 3: TGCHE -->
+      <div style="background: var(--bg-color); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.25rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+          <strong style="color: #0369A1; font-size: 1.05rem;">3. Telangana State Council of Higher Education (TGCHE)</strong>
+          <span class="badge badge-needs-verification">Current-year entries pending</span>
+        </div>
+        <p style="font-size: 0.875rem; color: var(--text-main); line-height: 1.6;">
+          TGCHE counselling sources can support current institute and cutoff research. Existing cutoff rows have not been rechecked for this update. <a href="https://tgeapcet.nic.in/institute_profile.aspx" target="_blank" rel="noopener">Open the TGEAPCET institute profile</a>.
+        </p>
+      </div>
+
+      <!-- Source 4: PCI -->
+      <div style="background: var(--bg-color); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.25rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+          <strong style="color: #0369A1; font-size: 1.05rem;">4. Pharmacy Council of India (PCI)</strong>
+          <span class="badge badge-verified">Statutory Pharmacy Approvals</span>
+        </div>
+        <p style="font-size: 0.875rem; color: var(--text-main); line-height: 1.6;">
+          Every pharmacy institution's approval status under Section 12 of the Pharmacy Act 1948 is checked against the central PCI list for B.Pharm, Pharm.D (6-Year Clinical Doctorate), and D.Pharm offerings.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 3: Field-Level Verification Standard -->
+  <div class="card" style="padding: 2.25rem; margin-bottom: 2rem; border-top: 4px solid var(--mint-green);">
+    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
+      <div style="width: 44px; height: 44px; border-radius: 12px; background: var(--mint-green); color: #1E6B47; display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">
+        🔍
+      </div>
+      <div>
+        <h2 style="font-size: 1.4rem; color: var(--navy-heading);">Field-Level Visual Indicators</h2>
+        <span style="font-size: 0.8rem; color: var(--text-muted);">How to read data badges across the portal</span>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+      <div style="background: var(--mint-green); border: 1px solid #BFE6D0; border-radius: var(--radius-md); padding: 1.25rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+          <span class="badge badge-verified" style="background: #FFFFFF;">Verified</span>
+          <strong style="color: #1E6B47;">Metric row marked verified</strong>
+        </div>
+        <p style="font-size: 0.85rem; color: #165337; line-height: 1.55;">
+          Data item has been cross-referenced with a signed government gazette, TAFRC order, SBTET notification, or official college NIRF/NAAC submission.
+        </p>
+      </div>
+
+      <div style="background: var(--amber-warning); border: 1px solid #FFE4B5; border-radius: var(--radius-md); padding: 1.25rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+          <span class="badge badge-needs-verification" style="background: #FFFFFF;">Pending Verification</span>
+          <strong style="color: #92400E;">Self-Reported / Pending</strong>
+        </div>
+        <p style="font-size: 0.85rem; color: #78350F; line-height: 1.55;">
+          Data point is currently undergoing audit or was self-reported by the college without independent third-party regulatory certification.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 4: Recommendation Math -->
+  <div class="card" style="padding: 2.25rem; border-top: 4px solid var(--lavender);">
+    <h2 style="font-size: 1.4rem; color: var(--navy-heading); margin-bottom: 0.75rem;">Transparent Scoring Formulation</h2>
+    <p style="color: var(--text-main); font-size: 0.95rem; line-height: 1.7; margin-bottom: 1rem;">
+      College Darpan computes match scores ($0–100$) using linear normalized combinations of student-weighted dimensions:
+    </p>
+
+    <div style="background: var(--bg-color); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1rem 1.25rem; font-family: monospace; font-size: 0.875rem; color: var(--navy-heading); margin-bottom: 1rem;">
+      Score = w_branch(S_branch) + w_fee(S_fee) + w_placement(S_placement) + w_location(S_loc) + w_infra(S_infra)
+    </div>
+
+    <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.6;">
+      Where weights satisfy $\sum w_i = 1.0$. If a college is missing official fee or placement records, the engine applies a conservative penalty rather than disqualifying the college, and generates an explicit textual caution explaining the exact data uncertainty.
+    </p>
+  </div>
+
+</div>
+{% endblock %}

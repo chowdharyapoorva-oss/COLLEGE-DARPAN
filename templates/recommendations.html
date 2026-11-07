@@ -1,0 +1,329 @@
+{% extends "base.html" %}
+
+{% block title %}AI College Recommendations (Polytechnic, B.Tech, Pharmacy) — College Darpan{% endblock %}
+
+{% block content %}
+<div class="container" style="margin-top: 2.5rem; margin-bottom: 4rem;">
+  
+  <!-- Wizard Header -->
+  <div class="wizard-header">
+    <span class="badge badge-soft-pink" style="margin-bottom: 0.5rem;">Explainable AI Engine</span>
+    <h1 style="font-size: 2.5rem; color: var(--navy-heading); margin-bottom: 0.5rem;">
+      AI College Recommendation Engine
+    </h1>
+    <p style="color: var(--text-muted); font-size: 1.05rem; max-width: 680px; margin: 0 auto;">
+      Explore Telangana directory records matched to your preferences with explainable multi-criteria scoring. Treat results as guidance, not an admission guarantee.
+    </p>
+  </div>
+
+  <!-- Step-by-Step Form Card -->
+  <div class="wizard-form-card">
+    <form action="{{ url_for('recommendations') }}" method="POST" id="recForm">
+      
+      <!-- Academic & Stream Information Section -->
+      <div style="margin-bottom: 2rem;">
+        <h3 style="font-size: 1.2rem; color: var(--navy-heading); margin-bottom: 1rem; display:flex; align-items:center; gap:0.5rem;">
+          <span style="width:28px; height:28px; border-radius:50%; background:var(--blush-pink); color:#9D174D; display:flex; align-items:center; justify-content:center; font-size:0.85rem; font-weight:800;">1</span>
+          Education Stream & Entrance Details
+        </h3>
+
+        <div class="form-grid-3">
+          <!-- Education Stream Selection -->
+          <div>
+            <label class="filter-label" for="categorySelectStream">Target Education Stream *</label>
+            <select name="category" id="categorySelectStream" class="filter-select" required>
+              <option value="engineering" {% if not results_data or results_data.preferences_applied.category == 'engineering' %}selected{% endif %}>
+                B.Tech / Engineering
+              </option>
+              <option value="polytechnic" {% if results_data and results_data.preferences_applied.category == 'polytechnic' %}selected{% endif %}>
+                Polytechnic / Diploma (SBTET)
+              </option>
+              <option value="pharmacy" {% if results_data and results_data.preferences_applied.category == 'pharmacy' %}selected{% endif %}>
+                Pharmacy (B.Pharm / Pharm.D)
+              </option>
+            </select>
+          </div>
+
+          <!-- Entrance Exam -->
+          <div>
+            <label class="filter-label" for="examSelect">Entrance Examination *</label>
+            <select name="exam" id="examSelect" class="filter-select" required>
+              <option value="TS EAPCET" {% if not results_data or results_data.preferences_applied.exam == 'TS EAPCET' %}selected{% endif %}>
+                TS EAPCET (Intermediate 1st Year Entry)
+              </option>
+              <option value="TS ECET" {% if results_data and results_data.preferences_applied.exam == 'TS ECET' %}selected{% endif %}>
+                TS ECET (Diploma Lateral Entry to 2nd Year)
+              </option>
+            </select>
+          </div>
+
+          <!-- Entrance Rank -->
+          <div>
+            <label class="filter-label" for="rankInput">Your Rank (State Rank) *</label>
+            <input 
+              type="number" 
+              name="rank" 
+              id="rankInput" 
+              class="form-input" 
+              placeholder="e.g. 450" 
+              min="1" 
+              max="200000"
+              value="{{ results_data.preferences_applied.rank if results_data and results_data.preferences_applied.rank else '' }}"
+              required
+            >
+          </div>
+        </div>
+
+        <div class="form-grid-3" style="margin-top: 1rem;">
+          <!-- Reservation / Caste Category -->
+          <div>
+            <label class="filter-label" for="casteSelect">Reservation Category</label>
+            <select name="caste_category" id="casteSelect" class="filter-select">
+              <option value="OC_BOYS" {% if results_data and results_data.preferences_applied.category == 'OC_BOYS' %}selected{% endif %}>OC / General (Boys / General)</option>
+              <option value="OC_GIRLS" {% if results_data and results_data.preferences_applied.category == 'OC_GIRLS' %}selected{% endif %}>OC / General (Girls)</option>
+              <option value="BC_A" {% if results_data and results_data.preferences_applied.category == 'BC_A' %}selected{% endif %}>BC-A</option>
+              <option value="BC_B" {% if results_data and results_data.preferences_applied.category == 'BC_B' %}selected{% endif %}>BC-B</option>
+              <option value="BC_C" {% if results_data and results_data.preferences_applied.category == 'BC_C' %}selected{% endif %}>BC-C</option>
+              <option value="BC_D" {% if results_data and results_data.preferences_applied.category == 'BC_D' %}selected{% endif %}>BC-D</option>
+              <option value="BC_E" {% if results_data and results_data.preferences_applied.category == 'BC_E' %}selected{% endif %}>BC-E</option>
+              <option value="SC" {% if results_data and results_data.preferences_applied.category == 'SC' %}selected{% endif %}>SC</option>
+              <option value="ST" {% if results_data and results_data.preferences_applied.category == 'ST' %}selected{% endif %}>ST</option>
+            </select>
+          </div>
+
+          <!-- Preferred Branch -->
+          <div>
+            <label class="filter-label" for="branchSelect">Preferred Branch / Program *</label>
+            <select name="branch" id="branchSelect" class="filter-select">
+              <option value="AIML">Artificial Intelligence & Machine Learning (AIML)</option>
+              <option value="CSE">Computer Science and Engineering (CSE)</option>
+              <option value="CSD">Data Science (CSD / AIDS)</option>
+              <option value="INF">Information Technology (IT)</option>
+              <option value="ECE">Electronics & Communication (ECE)</option>
+              <option value="EEE">Electrical & Electronics (EEE)</option>
+              <option value="MECH">Mechanical Engineering</option>
+              <option value="CIVIL">Civil Engineering</option>
+              <option value="Any">Any Allied Engineering Branch</option>
+            </select>
+          </div>
+
+          <!-- Maximum Budget -->
+          <div>
+            <label class="filter-label" for="budgetInput">Max Annual Tuition Budget (₹)</label>
+            <select name="max_budget" id="budgetInput" class="filter-select">
+              <option value="">No Strict Budget Limit</option>
+              <option value="40000">Under ₹40,000 (Govt Subsidized Rate)</option>
+              <option value="100000">Under ₹1,00,000 / year</option>
+              <option value="125000">Under ₹1,25,000 / year</option>
+              <option value="150000">Under ₹1,50,000 / year</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preference & Priority Weights Section -->
+      <div style="margin-bottom: 2rem;">
+        <h3 style="font-size: 1.2rem; color: var(--navy-heading); margin-bottom: 1rem; display:flex; align-items:center; gap:0.5rem;">
+          <span style="width:28px; height:28px; border-radius:50%; background:var(--sky-blue); color:#0369A1; display:flex; align-items:center; justify-content:center; font-size:0.85rem; font-weight:800;">2</span>
+          Location & Decision Priority Sliders
+        </h3>
+
+        <div style="margin-bottom: 1.25rem;">
+          <label class="filter-label" for="districtSelect">Preferred District</label>
+          <select name="district" id="districtSelect" class="filter-select">
+            <option value="Any">Any District in Telangana</option>
+            {% for d in districts %}
+              <option value="{{ d }}" {% if results_data and results_data.preferences_applied.district == d %}selected{% endif %}>{{ d }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Priority Weights Sliders (Normalized Multi-Criteria) -->
+        <div class="priority-sliders">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:0.5rem;">
+            <div>
+              <h4 style="font-size: 1.05rem; color: var(--navy-heading);">Custom Factor Priorities (1 to 5)</h4>
+              <p style="font-size: 0.8rem; color: var(--text-muted);">Adjust the relative weights. The algorithm automatically normalizes all factors to sum strictly to 100%.</p>
+            </div>
+
+            <!-- Quick Presets -->
+            <div style="display: flex; gap: 0.4rem;">
+              <button type="button" class="btn btn-sm btn-secondary priority-preset-btn" data-preset="balanced">Balanced</button>
+              <button type="button" class="btn btn-sm btn-secondary priority-preset-btn" data-preset="affordability">Affordability</button>
+              <button type="button" class="btn btn-sm btn-secondary priority-preset-btn" data-preset="placements">Placements</button>
+            </div>
+          </div>
+
+          <!-- Slider 1: Branch Match -->
+          <div class="slider-row">
+            <span class="slider-label">Branch Compatibility:</span>
+            <input type="range" name="w_branch" id="w_branch" class="slider-input" min="1" max="5" step="0.5" value="3">
+            <span class="slider-val-badge" id="val_branch">3</span>
+          </div>
+
+          <!-- Slider 2: Affordability -->
+          <div class="slider-row">
+            <span class="slider-label">Tuition Affordability:</span>
+            <input type="range" name="w_fee" id="w_fee" class="slider-input" min="1" max="5" step="0.5" value="2.5">
+            <span class="slider-val-badge" id="val_fee">2.5</span>
+          </div>
+
+          <!-- Slider 3: Placements -->
+          <div class="slider-row">
+            <span class="slider-label">Placement / Progression:</span>
+            <input type="range" name="w_placements" id="w_placements" class="slider-input" min="1" max="5" step="0.5" value="2">
+            <span class="slider-val-badge" id="val_placements">2</span>
+          </div>
+
+          <!-- Slider 4: Location -->
+          <div class="slider-row">
+            <span class="slider-label">Location Convenience:</span>
+            <input type="range" name="w_location" id="w_location" class="slider-input" min="1" max="5" step="0.5" value="1">
+            <span class="slider-val-badge" id="val_location">1</span>
+          </div>
+
+          <!-- Slider 5: Infrastructure & Faculty -->
+          <div class="slider-row">
+            <span class="slider-label">Faculty & Infrastructure:</span>
+            <input type="range" name="w_infra" id="w_infra" class="slider-input" min="1" max="5" step="0.5" value="1.5">
+            <span class="slider-val-badge" id="val_infra">1.5</span>
+          </div>
+        </div>
+
+        <!-- Action Button -->
+        <div style="margin-top: 2rem; text-align: center;">
+          <button type="submit" class="btn btn-primary btn-lg" style="min-width: 280px; box-shadow: var(--shadow-md);">
+            🚀 Generate Explainable Recommendations
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Recommendation Results Section -->
+  {% if results_data %}
+    <div id="resultsSection" style="margin-top: 3.5rem;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <span class="badge badge-verified">Recommendation Complete</span>
+          <h2 style="font-size: 2.2rem; color: var(--navy-heading); margin-top: 0.35rem;">
+            Ranked Recommendations for You
+          </h2>
+          <p style="color: var(--text-muted); font-size: 0.95rem;">
+            Analyzed {{ results_data.total_analyzed }} colleges using your weighted priorities:
+            Branch ({{ "{:.0f}".format(results_data.normalized_weights.branch * 100) }}%), 
+            Fees ({{ "{:.0f}".format(results_data.normalized_weights.affordability * 100) }}%), 
+            Placements ({{ "{:.0f}".format(results_data.normalized_weights.placements * 100) }}%), 
+            Location ({{ "{:.0f}".format(results_data.normalized_weights.location * 100) }}%), 
+            Infrastructure ({{ "{:.0f}".format(results_data.normalized_weights.infrastructure * 100) }}%).
+          </p>
+        </div>
+
+        <a href="#recForm" class="btn btn-secondary btn-sm" onclick="window.scrollTo({top: 0, behavior: 'smooth'});">
+          ✏️ Modify Preferences
+        </a>
+      </div>
+
+      <!-- Safeguard Notice Banner -->
+      <div style="background: var(--amber-warning); border: 1px solid #FFE4B5; border-radius: var(--radius-md); padding: 1rem 1.25rem; margin-bottom: 2rem; display: flex; align-items: flex-start; gap: 0.75rem;">
+        <span style="font-size: 1.25rem;">⚠️</span>
+        <div style="font-size: 0.85rem; color: #78350F; line-height: 1.5;">
+          <strong>Admission Eligibility Safeguard:</strong> A high match score indicates that an institution aligns with your criteria (discipline, budget, location, infrastructure). Official seat allotments are conducted exclusively by TGCHE during web counselling based on category reservations and real-time options.
+        </div>
+      </div>
+
+      <!-- Ranked College Cards Loop -->
+      <div style="display: flex; flex-direction: column;">
+        {% for item in results_data.results %}
+          {% set col = item.college %}
+          <div class="match-card">
+            
+            <!-- Match Score Circle -->
+            <div class="match-score-circle">
+              <span class="score-number">{{ item.match_score }}</span>
+              <span class="score-label">Match Score</span>
+            </div>
+
+            <!-- College Details & Plain-English Explanation -->
+            <div style="flex: 1;">
+              <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem; flex-wrap: wrap;">
+                <span class="college-code-pill">{{ col.college_code }}</span>
+                <span class="badge {% if col.primary_category == 'polytechnic' %}badge-soft-pink{% elif col.primary_category == 'pharmacy' %}badge-lavender{% else %}badge-soft-blue{% endif %}">
+                  {{ col.primary_category|capitalize }}
+                </span>
+                <span class="badge badge-verified">
+                  Data: {{ col.verification_status }}
+                </span>
+                <span class="badge badge-lavender">Data Completeness: {{ item.data_completeness }}%</span>
+              </div>
+
+              <h3 style="font-size: 1.35rem; color: var(--navy-heading); margin-bottom: 0.35rem;">
+                <a href="{{ url_for('college_detail', college_id=col.id) }}" style="color: inherit;">
+                  #{{ loop.index }} — {{ col.name }}
+                </a>
+              </h3>
+
+              <div style="font-size: 0.875rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+                📍 {{ col.district }} • {{ col.management_type or col.institution_type }} • Est. {{ col.est_year or 'N/A' }}
+              </div>
+
+              <!-- Plain-English Explanation Box -->
+              <div class="explanation-box">
+                <strong>Why this college was recommended:</strong><br/>
+                {{ item.explanation }}
+              </div>
+
+              <!-- Admission Cutoff Comparison Safeguard Box -->
+              <div class="eligibility-box">
+                <strong>Historical Cutoff Comparison:</strong><br/>
+                {{ item.eligibility.message }}
+                <div style="font-size: 0.8rem; margin-top: 4px; color: var(--text-muted);">{{ item.eligibility.detail }}</div>
+              </div>
+
+              <!-- Quick Metrics Tags -->
+              <div style="display: flex; gap: 1rem; margin-top: 0.85rem; font-size: 0.85rem; color: var(--text-main); flex-wrap: wrap;">
+                <span>💰 Tuition: <strong>{% if col.annual_tuition_fee %}₹{{ "{:,.0f}".format(col.annual_tuition_fee) }}/yr{% else %}Not published{% endif %}</strong></span>
+                <span>🏛️ Approval: <strong>{{ col.approval_body or 'AICTE / SBTET' }}</strong></span>
+                {% if col.average_package %}
+                  <span>💼 Avg Package: <strong>{{ col.average_package }} LPA</strong></span>
+                {% endif %}
+                <span>⭐ Status: <strong>{{ col.management_type or col.institution_type }}</strong></span>
+              </div>
+            </div>
+
+            <!-- Action Buttons Column -->
+            <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: stretch; min-width: 130px;">
+              <a href="{{ url_for('college_detail', college_id=col.id) }}" class="btn btn-sm btn-secondary" style="width:100%;">
+                View Profile
+              </a>
+              <button 
+                type="button" 
+                class="btn btn-sm btn-soft-blue" 
+                onclick="CompareManager.add({{ col.id }}, '{{ col.college_code }}')"
+                style="width:100%;"
+              >
+                + Compare
+              </button>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts_extra %}
+<script src="{{ url_for('static', filename='js/recommendations.js') }}"></script>
+{% if results_data %}
+<script>
+  // Smooth scroll to results
+  document.addEventListener('DOMContentLoaded', () => {
+    const res = document.getElementById('resultsSection');
+    if (res) {
+      res.scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+</script>
+{% endif %}
+{% endblock %}

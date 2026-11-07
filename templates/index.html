@@ -1,0 +1,441 @@
+{% extends "base.html" %}
+
+{% block title %}College Darpan — Find the Right College for Your Future (Telangana){% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="container hero-content">
+    <div>
+      <div class="hero-tagline">
+        <span>✨</span> {{ tagline }}
+      </div>
+      <h1 class="hero-title">
+        Find the <span class="highlight-pink">Right College</span> for Your <span class="highlight-blue">Future.</span>
+      </h1>
+      <p class="hero-desc">
+        A transparent, student-first education discovery and recommendation platform for Telangana. Helping diploma students, intermediate graduates, and parents compare verified tuition fees, historical cutoffs, PCI/AICTE approvals, and explainable recommendations across <strong>Polytechnic</strong>, <strong>B.Tech Engineering</strong>, and <strong>Pharmacy</strong>.
+      </p>
+      
+      <div class="hero-actions">
+        <a href="{{ url_for('recommendations') }}" class="btn btn-primary btn-lg">
+          🎯 Find My College
+        </a>
+        <a href="{{ url_for('colleges_directory') }}" class="btn btn-secondary btn-lg">
+          🏛️ Explore Colleges
+        </a>
+        <a href="{{ url_for('chatbot_page') }}" class="btn btn-soft-pink btn-lg">
+          💬 Ask AI Assistant
+        </a>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 1.5rem; font-size: 0.85rem; color: var(--text-muted); flex-wrap: wrap;">
+        <span>✓ Zero-Fabrication Policy</span>
+        <span>✓ TAFRC & SBTET Verified Fees</span>
+        <span>✓ TS POLYCET, EAPCET & ECET Pathways</span>
+      </div>
+    </div>
+
+    <!-- Restrained Hero Visual Card -->
+    <div class="hero-visual">
+      <div class="hero-artwork-card">
+        <div class="badge badge-verified artwork-badge">Telangana Education Audit</div>
+        
+        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem;">
+          <div style="width: 52px; height: 52px; border-radius: 12px; background: var(--button-gradient); display: flex; align-items: center; justify-content: center; font-size: 1.75rem;">
+            🎓
+          </div>
+          <div>
+            <h3 style="font-size: 1.15rem; color: var(--navy-heading);">College Darpan Engine</h3>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Multi-Category Academic Matcher</span>
+          </div>
+        </div>
+
+        <div style="background: var(--bg-color); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1rem;">
+          <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 6px;">
+            <span>Category Coverage</span>
+            <strong style="color: #0369A1;">Polytechnic • B.Tech • Pharmacy</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 6px;">
+            <span>Tuition Verification</span>
+            <strong style="color: #1E6B47;">TAFRC & SBTET Gazettes</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+            <span>Lateral Entry Integration</span>
+            <strong style="color: #DB2777;">TS ECET 10% Quota</strong>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 0.5rem; justify-content: space-between;">
+          <div style="flex:1; text-align:center; background:#FFF; border:1px solid var(--border-color); border-radius:8px; padding:6px;">
+            <div style="font-size:0.7rem; color:var(--text-muted);">Institutions listed</div>
+            <div style="font-size:1.15rem; font-weight:800; color:#DB2777;">{{ stats.colleges_count }} Colleges</div>
+          </div>
+          <div style="flex:1; text-align:center; background:#FFF; border:1px solid var(--border-color); border-radius:8px; padding:6px;">
+            <div style="font-size:0.7rem; color:var(--text-muted);">Recommendation Model</div>
+            <div style="font-size:0.85rem; font-weight:700; color:#1E6B47;">Explainable AI</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Education Category Selection Cards (Polytechnic, B.Tech, Pharmacy) -->
+<section class="container" style="margin-top: -1.5rem; margin-bottom: 3.5rem;">
+  <div style="text-align: center; margin-bottom: 2rem;">
+    <span class="badge badge-soft-pink" style="margin-bottom: 0.5rem;">Core Education Pathways</span>
+    <h2 style="font-size: 2rem; color: var(--navy-heading);">Choose Your Education Stream</h2>
+    <p style="color: var(--text-muted); font-size: 0.95rem; max-width: 620px; margin: 0.25rem auto 0;">
+      Explore institution listings, entrance cutoffs, curricula, and fee benchmarks tailored to each specific discipline.
+    </p>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
+    <!-- 1. Polytechnic / Diploma Card -->
+    <div class="card" style="display: flex; flex-direction: column; justify-content: space-between; border-top: 4px solid var(--pastel-pink); padding: 1.75rem;">
+      <div>
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+          <div style="width: 48px; height: 48px; border-radius: 12px; background: var(--blush-pink); color: #9D174D; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+            🛠️
+          </div>
+          <span class="badge badge-soft-pink">TS POLYCET</span>
+        </div>
+        <h3 style="font-size: 1.3rem; color: var(--navy-heading); margin-bottom: 0.5rem;">Polytechnic / Diploma</h3>
+        <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1.25rem;">
+          Explore SBTET-listed diploma institutions and compare source-linked programme information. Check current admission and fee notices before applying.
+        </p>
+
+        <div style="background: var(--bg-color); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 0.75rem 1rem; margin-bottom: 1.25rem; font-size: 0.8rem;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+            <span>Institutions:</span> <strong>{{ stats.polytechnic_count }} Listed</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+            <span>Key Streams:</span> <strong>CME, ECE, EEE, MECH, CIVIL</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>Next Step:</span> <strong>TS ECET Lateral Entry</strong>
+          </div>
+        </div>
+      </div>
+
+      <a href="{{ url_for('polytechnic_page') }}" class="btn btn-secondary" style="width: 100%;">
+        Explore Polytechnic Colleges →
+      </a>
+    </div>
+
+    <!-- 2. B.Tech / Engineering Card -->
+    <div class="card" style="display: flex; flex-direction: column; justify-content: space-between; border-top: 4px solid var(--pastel-blue); padding: 1.75rem;">
+      <div>
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+          <div style="width: 48px; height: 48px; border-radius: 12px; background: var(--sky-blue); color: #0369A1; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+            💻
+          </div>
+          <span class="badge badge-soft-blue">EAPCET & ECET</span>
+        </div>
+        <h3 style="font-size: 1.3rem; color: var(--navy-heading); margin-bottom: 0.5rem;">B.Tech / Engineering</h3>
+        <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1.25rem;">
+          4-year undergraduate engineering degrees across University, Autonomous, and Private colleges. Admission via TS EAPCET (1st-year) and TS ECET (2nd-year lateral entry for diploma holders).
+        </p>
+
+        <div style="background: var(--bg-color); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 0.75rem 1rem; margin-bottom: 1.25rem; font-size: 0.8rem;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+            <span>Institutions:</span> <strong>{{ stats.engineering_count }} listed</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+            <span>Key Streams:</span> <strong>AIML, CSE, CSD, AIDS, ECE</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>Fee Regulation:</span> <strong>TAFRC Approved</strong>
+          </div>
+        </div>
+      </div>
+
+      <a href="{{ url_for('engineering_page') }}" class="btn btn-primary" style="width: 100%;">
+        Explore Engineering Colleges →
+      </a>
+    </div>
+
+    <!-- 3. Pharmacy Card -->
+    <div class="card" style="display: flex; flex-direction: column; justify-content: space-between; border-top: 4px solid var(--lavender); padding: 1.75rem;">
+      <div>
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+          <div style="width: 48px; height: 48px; border-radius: 12px; background: var(--lavender); color: #6D28D9; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+            💊
+          </div>
+          <span class="badge badge-lavender">PCI Approved</span>
+        </div>
+        <h3 style="font-size: 1.3rem; color: var(--navy-heading); margin-bottom: 0.5rem;">Pharmacy</h3>
+        <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1.25rem;">
+          Pharmaceutical programs including 4-year B.Pharm, 6-year Pharm.D (Doctor of Pharmacy with 1-year clinical hospital internship), and 2-year D.Pharm. Regulated by Pharmacy Council of India.
+        </p>
+
+        <div style="background: var(--bg-color); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 0.75rem 1rem; margin-bottom: 1.25rem; font-size: 0.8rem;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+            <span>Institutions:</span> <strong>{{ stats.pharmacy_count }} Verified</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+            <span>Degrees:</span> <strong>B.Pharm • Pharm.D • D.Pharm</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>Clinical Tie-ups:</span> <strong>Teaching Hospitals</strong>
+          </div>
+        </div>
+      </div>
+
+      <a href="{{ url_for('pharmacy_page') }}" class="btn btn-secondary" style="width: 100%;">
+        Explore Pharmacy Colleges →
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Genuine Live Database Statistics Banner -->
+<div class="container" style="margin-bottom: 3.5rem;">
+  <div class="stats-banner">
+    <div class="stat-item">
+      <div class="stat-icon-wrap stat-icon-pink">🏛️</div>
+      <div>
+        <div class="stat-value">{{ stats.colleges_count }}</div>
+        <div class="stat-label">Total Colleges Listed</div>
+      </div>
+    </div>
+    
+    <div class="stat-item">
+      <div class="stat-icon-wrap stat-icon-blue">💻</div>
+      <div>
+        <div class="stat-value">{{ stats.branches_count }}</div>
+        <div class="stat-label">Distinct Disciplines & Degrees</div>
+      </div>
+    </div>
+
+    <div class="stat-item">
+      <div class="stat-icon-wrap stat-icon-green">📊</div>
+      <div>
+        <div class="stat-value">{{ stats.verified_placements }}</div>
+        <div class="stat-label">Verified Placement Datasets</div>
+      </div>
+    </div>
+
+    <div class="stat-item">
+      <div class="stat-icon-wrap stat-icon-lavender">🛣️</div>
+      <div>
+        <div class="stat-value">{{ stats.admission_pathways }}</div>
+        <div class="stat-label">Admission Pathways (POLYCET / ECET / EAPCET)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Prominent Search Bar -->
+<section class="container search-container" style="margin-bottom: 3.5rem;">
+  <form action="{{ url_for('colleges_directory') }}" method="GET" class="search-box-wrap">
+    <span style="font-size: 1.3rem; color: #9CA3AF;">🔍</span>
+    <input 
+      type="text" 
+      name="search" 
+      class="search-input" 
+      placeholder="Search by college name, code (e.g. Masab Tank, OUCE, CBIT), district, or discipline..."
+      autocomplete="off"
+    >
+    <select name="category" style="border:none; background:var(--bg-color); padding:0.6rem 0.8rem; border-radius:var(--radius-md); font-family:inherit; font-size:0.875rem; color:var(--text-main); outline:none;">
+      <option value="all">All Categories</option>
+      <option value="polytechnic">Polytechnic / Diploma</option>
+      <option value="engineering">B.Tech / Engineering</option>
+      <option value="pharmacy">Pharmacy</option>
+    </select>
+    <select name="district" style="border:none; background:var(--bg-color); padding:0.6rem 0.8rem; border-radius:var(--radius-md); font-family:inherit; font-size:0.875rem; color:var(--text-main); outline:none;">
+      <option value="All">All Districts</option>
+      {% for d in districts %}
+        <option value="{{ d }}">{{ d }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit" class="btn btn-primary" style="border-radius: var(--radius-full); padding: 0.65rem 1.4rem;">
+      Search Directory
+    </button>
+  </form>
+</section>
+
+<!-- Key Platform Capabilities Grid -->
+<section class="container" style="margin-bottom: 4rem;">
+  <div style="text-align: center; margin-bottom: 2.5rem;">
+    <span class="badge badge-soft-blue" style="margin-bottom: 0.5rem;">Platform Capabilities</span>
+    <h2 style="font-size: 2rem; color: var(--navy-heading);">Built for Student Transparency & Decision Clarity</h2>
+    <p style="color: var(--text-muted); font-size: 0.95rem;">
+      Designed specifically for Telangana students to replace confusing marketing claims with verified regulatory records.
+    </p>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
+    <div class="card" style="padding: 1.75rem;">
+      <div style="font-size: 2rem; margin-bottom: 0.75rem;">🎯</div>
+      <h3 style="font-size: 1.15rem; color: var(--navy-heading); margin-bottom: 0.5rem;">Personalised AI Recommendations</h3>
+      <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.6;">
+        Combines entrance exam rank, branch preference, budget, and location. Generates transparent, human-readable explanations instead of black-box predictions.
+      </p>
+    </div>
+
+    <div class="card" style="padding: 1.75rem;">
+      <div style="font-size: 2rem; margin-bottom: 0.75rem;">⚖️</div>
+      <h3 style="font-size: 1.15rem; color: var(--navy-heading); margin-bottom: 0.5rem;">Side-by-Side Comparison</h3>
+      <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.6;">
+        Compare up to 4 institutions simultaneously across tuition fees, laboratory facilities, placement data, and closing rank cutoffs.
+      </p>
+    </div>
+
+    <div class="card" style="padding: 1.75rem;">
+      <div style="font-size: 2rem; margin-bottom: 0.75rem;">💰</div>
+      <h3 style="font-size: 1.15rem; color: var(--navy-heading); margin-bottom: 0.5rem;">Transparent Fee Gazettes</h3>
+      <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.6;">
+        Fee values are shown only when a record has a source and verification status. Confirm current tuition and additional charges in the official notice.
+      </p>
+    </div>
+
+    <div class="card" style="padding: 1.75rem;">
+      <div style="font-size: 2rem; margin-bottom: 0.75rem;">🛣️</div>
+      <h3 style="font-size: 1.15rem; color: var(--navy-heading); margin-bottom: 0.5rem;">Admission & Cutoff Guidance</h3>
+      <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.6;">
+        Clear explanation of TS POLYCET, TS EAPCET, and TS ECET lateral-entry reservation rules, category allotments, and counselling rounds.
+      </p>
+    </div>
+
+    <div class="card" style="padding: 1.75rem;">
+      <div style="font-size: 2rem; margin-bottom: 0.75rem;">💬</div>
+      <h3 style="font-size: 1.15rem; color: var(--navy-heading); margin-bottom: 0.5rem;">Offline Darpan AI Assistant</h3>
+      <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.6;">
+        Ask questions locally without expensive cloud APIs. Rule-backed conversational engine answers queries accurately from database records.
+      </p>
+    </div>
+
+    <div class="card" style="padding: 1.75rem;">
+      <div style="font-size: 2rem; margin-bottom: 0.75rem;">🔍</div>
+      <h3 style="font-size: 1.15rem; color: var(--navy-heading); margin-bottom: 0.5rem;">Zero-Fabrication Data Audit</h3>
+      <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.6;">
+        Every data item is classified as Verified (Mint Green) or Unverified (Amber). If data is missing, we state it honestly.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Featured Institutions Across Streams -->
+<section class="container" style="margin-bottom: 4rem;">
+  <div style="display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <span class="badge badge-soft-blue" style="margin-bottom: 0.5rem;">Telangana institution directory</span>
+      <h2 style="font-size: 2rem; color: var(--navy-heading);">Featured Telangana Colleges</h2>
+      <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.25rem;">
+        Representative institutions across Polytechnic, B.Tech Engineering, and Pharmacy disciplines.
+      </p>
+    </div>
+    <div style="display: flex; gap: 0.5rem;">
+      <a href="{{ url_for('colleges_directory') }}" class="btn btn-secondary btn-sm">Explore All Colleges →</a>
+    </div>
+  </div>
+
+  <div class="college-grid">
+    {% for col in featured_colleges %}
+      <article class="college-card">
+        <div class="card-header-row">
+          <span class="college-code-pill">{{ col.college_code }}</span>
+          <span class="badge {% if col.primary_category == 'polytechnic' %}badge-soft-pink{% elif col.primary_category == 'pharmacy' %}badge-lavender{% else %}badge-soft-blue{% endif %}">
+            {{ col.primary_category|capitalize }}
+          </span>
+          <span class="badge badge-verified">{{ col.verification_status }}</span>
+        </div>
+
+        <h3 class="college-card-title">
+          <a href="{{ url_for('college_detail', college_id=col.id) }}">
+            {{ col.name }}
+          </a>
+        </h3>
+
+        <div class="college-card-meta">
+          <span>📍 {{ col.district }}</span>
+          <span>•</span>
+          <span>🏛️ {{ col.management_type or col.institution_type }}</span>
+          <span>•</span>
+          <span>📅 Est. {{ col.est_year or 'N/A' }}</span>
+        </div>
+
+        <!-- Metric highlights -->
+        <div class="metrics-grid">
+          <div class="metric-box">
+            <span class="metric-label">Annual Tuition Fee</span>
+            <span class="metric-val" style="color: #0284C7;">
+              {% if col.annual_tuition_fee and col.metrics_verification_status == 'Verified' and col.metrics_source_url and col.metrics_academic_year %}
+                ₹{{ "{:,.0f}".format(col.annual_tuition_fee) }}
+              {% else %}
+                Not published
+              {% endif %}
+            </span>
+          </div>
+
+          <div class="metric-box">
+            <span class="metric-label">Placement / Training</span>
+            <span class="metric-val" style="color: #1E6B47;">
+              {% if col.average_package and col.metrics_verification_status == 'Verified' and col.metrics_source_url and col.metrics_academic_year %}
+                {{ col.average_package }} LPA
+              {% elif col.primary_category == 'polytechnic' %}
+                Direct ECET Lateral
+              {% elif col.primary_category == 'pharmacy' %}
+                Hospital Affiliated
+              {% else %}
+                Not published
+              {% endif %}
+            </span>
+          </div>
+        </div>
+
+        <!-- Branches / Programs -->
+        <div class="branches-preview-wrap">
+          <span style="font-size: 0.725rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; display: block; margin-bottom: 4px;">
+            Available Specialisations:
+          </span>
+          <div class="branch-chips-list">
+            {% for b in col.branches[:4] %}
+              <span class="branch-chip" title="{{ b.branch_name }}">{{ b.branch_code }}</span>
+            {% endfor %}
+            {% if col.branches|length > 4 %}
+              <span class="branch-chip" style="background:var(--border-color); color:var(--text-muted);">+{{ col.branches|length - 4 }} more</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="card-action-footer">
+          <a href="{{ url_for('college_detail', college_id=col.id) }}" class="btn btn-primary btn-sm" style="flex: 1;">
+            View Details →
+          </a>
+          <button 
+            type="button" 
+            class="btn btn-secondary btn-sm" 
+            onclick="CompareManager.add({{ col.id }}, '{{ col.college_code }}')"
+            title="Add to compare tray"
+          >
+            + Compare
+          </button>
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- Call to Action Banner -->
+<section class="container" style="margin-bottom: 4rem;">
+  <div class="card" style="background: var(--hero-gradient); border: 2px solid var(--border-color); padding: 3rem 2rem; text-align: center; border-radius: var(--radius-xl);">
+    <h2 style="font-size: 2.2rem; color: var(--navy-heading); margin-bottom: 0.75rem;">
+      Ready to Discover Your Best-Fit Telangana College?
+    </h2>
+    <p style="color: var(--text-muted); font-size: 1.05rem; max-width: 600px; margin: 0 auto 1.75rem;">
+      Use our explainable AI recommendation engine to score Telangana polytechnic, engineering, and pharmacy institutions by your rank, branch, and tuition budget.
+    </p>
+    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+      <a href="{{ url_for('recommendations') }}" class="btn btn-primary btn-lg">
+        🎯 Start AI Recommendation Match
+      </a>
+      <a href="{{ url_for('chatbot_page') }}" class="btn btn-secondary btn-lg">
+        💬 Ask Darpan AI Assistant
+      </a>
+    </div>
+  </div>
+</section>
+{% endblock %}

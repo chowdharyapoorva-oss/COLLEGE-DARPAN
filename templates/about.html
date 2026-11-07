@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}About College Darpan — AI Education Platform{% endblock %}
+
+{% block content %}
+<div class="container container-narrow" style="margin-top: 2.5rem; margin-bottom: 4rem;">
+  
+  <!-- Header Banner -->
+  <div style="text-align: center; margin-bottom: 3rem;">
+    <span class="badge badge-soft-pink" style="margin-bottom: 0.5rem;">Academic Capstone Project</span>
+    <h1 style="font-size: 2.5rem; color: var(--navy-heading); margin-bottom: 0.5rem;">About College Darpan</h1>
+    <p style="color: var(--text-muted); font-size: 1.05rem;">
+      Your Future. Your College. Your Choice.
+    </p>
+  </div>
+
+  <!-- Student Story & Vision -->
+  <div class="card" style="padding: 2.25rem; margin-bottom: 2rem; border-top: 4px solid var(--pastel-pink);">
+    <h2 style="font-size: 1.4rem; color: var(--navy-heading); margin-bottom: 0.75rem;">The Origin & Vision</h2>
+    <p style="color: var(--text-main); font-size: 0.95rem; line-height: 1.7; margin-bottom: 1rem;">
+      As a <strong>third-year Artificial Intelligence and Machine Learning (AIML) diploma student</strong> in Telangana, I experienced firsthand the confusion and misinformation surrounding higher education admissions: commercial portals flooded with sponsored banners, hidden tuition fee extras, and zero transparent information for diploma students preparing for TS ECET lateral-entry into 2nd year B.Tech.
+    </p>
+    <p style="color: var(--text-main); font-size: 0.95rem; line-height: 1.7;">
+      <strong>College Darpan</strong> helps students explore <strong>Polytechnic / Diploma</strong>, <strong>B.Tech / Engineering</strong>, and <strong>Pharmacy</strong> records in Telangana. Newly added SBTET directory entries include a source and academic year; older records and programme, fee, cutoff, and placement details still need field-by-field rechecking.
+    </p>
+  </div>
+
+  <!-- Recommendation Engine Methodology -->
+  <div class="card" id="methodology" style="padding: 2.25rem; margin-bottom: 2rem; border-top: 4px solid var(--pastel-blue);">
+    <h2 style="font-size: 1.4rem; color: var(--navy-heading); margin-bottom: 0.75rem;">AI Recommendation Methodology</h2>
+    <p style="color: var(--text-main); font-size: 0.95rem; line-height: 1.7; margin-bottom: 1.25rem;">
+      Instead of an opaque "black-box" model that hallucinates cutoffs or packages, College Darpan implements an explainable <strong>Hybrid Multi-Criteria Recommendation Architecture</strong>:
+    </p>
+
+    <div style="display: flex; flex-direction: column; gap: 1rem; font-size: 0.925rem;">
+      <div style="background: var(--bg-color); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1rem 1.25rem;">
+        <strong style="color: #0369A1;">1. Content-Based Multi-Category Matching</strong>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">
+          Evaluates direct branch matches (100% for direct matches like AIML or CME, 75% for closely allied disciplines) and district geographic convenience.
+        </p>
+      </div>
+
+      <div style="background: var(--bg-color); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1rem 1.25rem;">
+        <strong style="color: #DB2777;">2. Rule-Based Eligibility Safeguards</strong>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">
+          Compares applicant rank against verified historical closing ranks for TS POLYCET, TS EAPCET, and TS ECET. If data is unverified, it explicitly shows: <em>"Admission eligibility cannot be confirmed with the available data."</em>
+        </p>
+      </div>
+
+      <div style="background: var(--bg-color); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1rem 1.25rem;">
+        <strong style="color: #6D28D9;">3. Normalized Multi-Criteria Weighted Scoring</strong>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">
+          Calculates the overall score ($0–100$) using student-customized priority weights normalized strictly to $1.0$:
+        </p>
+        <div style="background:#FFFFFF; border:1px solid var(--border-color); border-radius:6px; padding:8px 12px; margin-top:6px; font-family:monospace; font-size:0.8rem; color:var(--navy-heading);">
+          Score = w_branch(S_branch) + w_fee(S_fee) + w_placement(S_placement) + w_location(S_loc) + w_infra(S_infra)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Technology Stack -->
+  <div class="card" id="tech-stack" style="padding: 2.25rem; margin-bottom: 2rem; border-top: 4px solid var(--lavender);">
+    <h2 style="font-size: 1.4rem; color: var(--navy-heading); margin-bottom: 1rem;">Technology Stack</h2>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+      <div>
+        <h4 style="font-size: 1rem; color: var(--navy-heading); margin-bottom: 0.35rem;">Frontend</h4>
+        <ul style="padding-left: 1.25rem; font-size: 0.875rem; color: var(--text-muted); line-height: 1.6;">
+          <li>Semantic HTML5 & Responsive CSS Grid/Flexbox</li>
+          <li>Pastel Pink & Pastel Blue Visual Token Architecture</li>
+          <li>Vanilla JavaScript (ES6+) for interactive sliders & state</li>
+          <li>Jinja2 Server-Side Template Engine</li>
+          <li>Chart.js for verified data visualizations</li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 style="font-size: 1rem; color: var(--navy-heading); margin-bottom: 0.35rem;">Backend & Database</h4>
+        <ul style="padding-left: 1.25rem; font-size: 0.875rem; color: var(--text-muted); line-height: 1.6;">
+          <li>Python 3 & Flask Web Framework</li>
+          <li>SQLite Relational Database with relational integrity</li>
+          <li>Parameterized SQL queries (injection-proof)</li>
+          <li>Offline Rule-Backed Conversational Counseling Engine</li>
+          <li>Modular architecture with service separation</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Submission & Academic Contact -->
+  <div class="card" id="contact" style="padding: 2.25rem;">
+    <h2 style="font-size: 1.4rem; color: var(--navy-heading); margin-bottom: 0.5rem;">Academic Capstone Project Submission</h2>
+    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">
+      Submitted in partial fulfillment of the requirements for the award of <strong>Diploma in Artificial Intelligence and Machine Learning</strong> (State Board of Technical Education and Training, Telangana).
+    </p>
+
+    <div style="background: var(--bg-color); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1rem 1.25rem; font-size: 0.875rem; color: var(--navy-heading);">
+      <div><strong>Project Title:</strong> College Darpan — AI-Powered College Discovery & Transparency Platform</div>
+      <div><strong>Geographic Scope:</strong> Telangana Higher Education Institutions</div>
+      <div><strong>Covered Categories:</strong> Polytechnic / Diploma, B.Tech / Engineering, and Pharmacy</div>
+      <div><strong>Target Admission Pathways:</strong> TS POLYCET, TS ECET (Lateral Entry) & TS EAPCET</div>
+      <div><strong>Date of Submission:</strong> October 2026</div>
+    </div>
+  </div>
+</div>
+{% endblock %}

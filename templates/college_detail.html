@@ -1,0 +1,389 @@
+{% extends "base.html" %}
+
+{% block title %}{{ college.name }} ({{ college.college_code }}) — College Darpan Profile{% endblock %}
+
+{% block content %}
+{% set metrics_are_verified = college.metrics_verification_status == 'Verified' and college.metrics_source_url and college.metrics_year %}
+<div class="container" style="margin-top: 2rem; margin-bottom: 4rem;">
+  <!-- Breadcrumb & Top Bar -->
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+    <div style="font-size: 0.9rem; color: var(--text-muted);">
+      <a href="{{ url_for('index') }}" style="color: inherit;">Home</a> / 
+      <a href="{{ url_for('colleges_directory') }}" style="color: inherit;">Colleges</a> / 
+      <a href="{{ url_for('colleges_directory', category=college.primary_category) }}" style="color: inherit;">{{ college.primary_category|capitalize }}</a> /
+      <span style="color: var(--navy-heading); font-weight: 600;">{{ college.college_code }}</span>
+    </div>
+    
+    <div style="display: flex; gap: 0.5rem;">
+      <button 
+        type="button" 
+        class="btn btn-secondary btn-sm"
+        data-college-id="{{ college.id }}"
+        data-college-code="{{ college.college_code }}"
+        onclick="CompareManager.add(Number(this.dataset.collegeId), this.dataset.collegeCode)"
+      >
+        + Add to Compare
+      </button>
+      <a href="{{ url_for('recommendations', category=college.primary_category) }}" class="btn btn-primary btn-sm">
+        Check My Eligibility →
+      </a>
+    </div>
+  </div>
+
+  <!-- Header Banner Card -->
+  <div class="card" style="background: var(--hero-gradient); border: 2px solid var(--border-color); padding: 2.25rem; margin-bottom: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1.5rem;">
+      <div>
+        <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
+          <span class="college-code-pill" style="font-size: 0.9rem; padding: 0.25rem 0.75rem;">{{ college.college_code }}</span>
+          
+          <span class="badge {% if college.primary_category == 'polytechnic' %}badge-soft-pink{% elif college.primary_category == 'pharmacy' %}badge-lavender{% else %}badge-soft-blue{% endif %}">
+            {{ college.primary_category|capitalize }}
+          </span>
+
+          <span class="badge badge-verified">
+            {{ college.management_type or college.institution_type }}
+          </span>
+
+          <span class="badge badge-soft-blue">
+            Approval: {{ college.approval_body or 'Not listed' }}
+          </span>
+
+          <span class="badge {% if college.verification_status == 'Verified' %}badge-verified{% else %}badge-needs-verification{% endif %}">
+            {% if college.source_name %}SBTET identity listing{% else %}Legacy status · {{ college.verification_status }}{% endif %}
+          </span>
+          {% if college.source_name %}<span class="badge badge-verified">{{ college.source_academic_year }} listing</span>{% endif %}
+
+          {% if college.naac_grade %}
+            <span class="badge badge-lavender">NAAC {{ college.naac_grade }}</span>
+          {% endif %}
+
+          {% if college.hostel_available == 1 %}
+            <span class="badge badge-verified">🏠 Hostel</span>
+          {% endif %}
+        </div>
+        {% if college.source_url %}<p class="source-note">Institution listing source: <a href="{{ college.source_url }}" target="_blank" rel="noopener">{{ college.source_name or 'Open source' }}</a>{% if college.source_academic_year %} · academic year {{ college.source_academic_year }}{% endif %}</p>{% endif %}
+        
+        <h1 style="font-size: 2.2rem; color: var(--navy-heading); margin-bottom: 0.5rem; line-height: 1.25;">{{ college.name }}</h1>
+        <div style="font-size: 0.95rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+          <span>📍 {{ college.address }}</span>
+          <span>•</span>
+          <span>🏛️ District: {{ college.district }}</span>
+          <span>•</span>
+          <span>📅 Est. {{ college.est_year or 'N/A' }}</span>
+          {% if college.phone %}
+            <span>•</span>
+            <span>📞 {{ college.phone }}</span>
+          {% endif %}
+        </div>
+      </div>
+
+      {% if college.official_website %}
+        <div>
+          <a href="{{ college.official_website }}" target="_blank" rel="noopener" class="btn btn-secondary btn-sm" style="background: #FFFFFF;">
+            Official College Website ↗
+          </a>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Quick Metrics Highlight Row -->
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-top: 1.75rem; background: #FFFFFF; padding: 1.25rem; border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
+      <!-- Metric 1: Fee -->
+      <div style="text-align: center;">
+        <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Annual Tuition Fee</div>
+        <div style="font-size: 1.35rem; font-weight: 800; color: #0284C7; margin-top: 2px;">
+          {% if college.annual_tuition_fee and metrics_are_verified %}
+            ₹{{ "{:,.0f}".format(college.annual_tuition_fee) }}
+          {% else %}
+            Not published
+          {% endif %}
+        </div>
+        <div style="font-size: 0.7rem; color: var(--text-muted);">
+          {% if metrics_are_verified %}{{ college.metrics_year or 'Year not recorded' }} · <a href="{{ college.metrics_source_url }}" target="_blank" rel="noopener">source</a>{% else %}Source not verified{% endif %}
+        </div>
+      </div>
+
+      <!-- Metric 2: Admission Route -->
+      <div style="text-align: center;">
+        <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Primary Exam Route</div>
+        <div style="font-size: 1.2rem; font-weight: 800; color: #1E6B47; margin-top: 2px;">
+          {% if college.primary_category == 'polytechnic' %}
+            TS POLYCET
+          {% elif college.primary_category == 'pharmacy' %}
+            TS EAPCET (BiPC/MPC)
+          {% else %}
+            EAPCET / ECET
+          {% endif %}
+        </div>
+        <div style="font-size: 0.7rem; color: var(--text-muted);">Confirm the current route in official notices</div>
+      </div>
+
+      <!-- Metric 3: Placement / Lateral Entry -->
+      <div style="text-align: center;">
+        <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">
+          {% if college.primary_category == 'polytechnic' %}Progression Focus{% elif college.primary_category == 'pharmacy' %}Clinical Training{% else %}Average Package{% endif %}
+        </div>
+        <div style="font-size: 1.25rem; font-weight: 800; color: #DB2777; margin-top: 2px;">
+          {% if college.average_package and metrics_are_verified %}
+            {{ college.average_package }} LPA
+          {% else %}
+            Not published
+          {% endif %}
+        </div>
+        <div style="font-size: 0.7rem; color: var(--text-muted);">
+          {% if college.placement_percentage and metrics_are_verified %}Rate: {{ college.placement_percentage }}%{% else %}Not published{% endif %}
+        </div>
+      </div>
+
+      <!-- Metric 4: Campus / Infrastructure -->
+      <div style="text-align: center;">
+        <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Campus & Facilities</div>
+        <div style="font-size: 1.25rem; font-weight: 800; color: #6D28D9; margin-top: 2px;">
+          {% if college.campus_area_acres %}{{ college.campus_area_acres }} Acres{% else %}Not published{% endif %}
+        </div>
+        <div style="font-size: 0.7rem; color: var(--text-muted);">
+          {% if college.hostel_available == 1 %}Hostel listed{% else %}Not listed{% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile Detailed Sections Grid -->
+  <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+    <!-- Left Column: Overview, Academics, Admissions, Infrastructure -->
+    <div>
+      <!-- 1. Overview & About -->
+      <section class="card" style="margin-bottom: 2rem;">
+        <h3 style="font-size: 1.3rem; margin-bottom: 0.75rem; color: var(--navy-heading); display: flex; align-items: center; justify-content: space-between;">
+          <span>Institution Overview</span>
+          {% if college.source_name %}<span class="badge badge-verified">SBTET listing · {{ college.source_academic_year }}</span>{% endif %}
+        </h3>
+        <p style="color: var(--text-main); font-size: 1rem; line-height: 1.7; margin-bottom: 1rem;">
+          {{ college.description }}
+        </p>
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; background: var(--bg-color); padding: 1rem; border-radius: var(--radius-md); font-size: 0.875rem;">
+          <div><strong>District:</strong> {{ college.district }}</div>
+          <div><strong>Management:</strong> {{ college.management_type or college.institution_type }}</div>
+          <div><strong>Regulatory Body:</strong> {{ college.approval_body or 'AICTE / SBTET' }}</div>
+          <div><strong>Established:</strong> {{ college.est_year or 'N/A' }}</div>
+        </div>
+      </section>
+
+      <!-- 2. Academics & Verified Branches/Programs -->
+      <section class="card" style="margin-bottom: 2rem;">
+        <h3 style="font-size: 1.3rem; margin-bottom: 0.75rem; color: var(--navy-heading); display: flex; align-items: center; justify-content: space-between;">
+          <span>Academics & Approved Programmes</span>
+          <span class="badge badge-verified">{{ college.approval_body or 'AICTE' }} Sanctioned</span>
+        </h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.25rem;">
+          Verified courses with official seat intakes and approved entry pathways.
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+          {% for b in college.branches %}
+            <div style="background: #FFFFFF; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 0.85rem 1.25rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+              <div>
+                <strong style="color: var(--navy-heading); font-size: 0.95rem;">{{ b.branch_name }}</strong>
+                <span class="branch-chip" style="margin-left: 8px;">{{ b.branch_code }}</span>
+                {% if b.degree_level %}
+                  <span class="badge badge-soft-blue" style="font-size: 0.7rem; margin-left: 4px;">{{ b.degree_level }}</span>
+                {% endif %}
+                {% if b.duration_years %}
+                  <span style="font-size: 0.75rem; color: var(--text-muted); margin-left: 6px;">({{ b.duration_years }} Years)</span>
+                {% endif %}
+              </div>
+              <div style="font-size: 0.85rem; color: var(--text-muted);">
+                Sanctioned Intake: <strong style="color: var(--navy-heading);">{{ b.seats_intake }} Seats</strong>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </section>
+
+      <!-- 3. Admissions & Historical Cutoff Matrix -->
+      <section class="card" style="margin-bottom: 2rem;">
+        <h3 style="font-size: 1.3rem; margin-bottom: 0.5rem; color: var(--navy-heading); display: flex; align-items: center; justify-content: space-between;">
+          <span>Admission Cutoffs & Past Closing Ranks</span>
+          <span class="badge badge-verified">TGCHE Centralized Counselling</span>
+        </h3>
+        <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1.25rem;">
+          Historical closing ranks from official counselling allotments. These statistics illustrate historical competitive thresholds and do not guarantee future allotments.
+        </p>
+
+        {% if college.cutoffs %}
+          <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.88rem;">
+              <thead>
+                <tr style="background: var(--bg-color); text-align: left; border-bottom: 2px solid var(--border-color);">
+                  <th style="padding: 10px;">Entrance Exam</th>
+                  <th style="padding: 10px;">Branch</th>
+                  <th style="padding: 10px;">Pathway</th>
+                  <th style="padding: 10px;">Category</th>
+                  <th style="padding: 10px;">Past Closing Rank</th>
+                  <th style="padding: 10px;">Data Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for cut in college.cutoffs %}
+                  <tr style="border-bottom: 1px solid var(--border-color);">
+                    <td style="padding: 10px;"><strong>{{ cut.exam_name }}</strong></td>
+                    <td style="padding: 10px;"><span class="branch-chip">{{ cut.branch_code }}</span></td>
+                    <td style="padding: 10px; font-size: 0.825rem; color: var(--text-muted);">{{ cut.admission_pathway }}</td>
+                    <td style="padding: 10px;">{{ cut.category }}</td>
+                    <td style="padding: 10px; font-weight: 800; color: #0284C7;">{{ "{:,}".format(cut.cutoff_rank) }}</td>
+                    <td style="padding: 10px;"><span class="badge badge-verified" style="font-size:0.68rem;">Verified</span></td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="explanation-box" style="margin-top: 0;">
+            Admission eligibility cannot be confirmed with the available data for this college. Historical cutoff records are currently undergoing verification.
+          </div>
+        {% endif %}
+      </section>
+
+      <!-- 4. Laboratories, Hostel & Infrastructure -->
+      <section class="card">
+        <h3 style="font-size: 1.3rem; margin-bottom: 0.75rem; color: var(--navy-heading);">
+          Laboratories, Hostel & Infrastructure
+        </h3>
+        
+        <div style="margin-bottom: 1.25rem;">
+          <h4 style="font-size: 1rem; color: var(--navy-heading); margin-bottom: 0.35rem;">Laboratories & Clinical/Computing Facilities</h4>
+          <p style="font-size: 0.9rem; color: var(--text-main); line-height: 1.6;">
+            {{ college.laboratories_information or college.infrastructure_information or 'Departmental laboratories equipped per statutory AICTE/PCI/SBTET inspection guidelines.' }}
+          </p>
+        </div>
+
+        <div style="margin-bottom: 1.25rem;">
+          <h4 style="font-size: 1rem; color: var(--navy-heading); margin-bottom: 0.35rem;">Hostel & Residential Accommodation</h4>
+          <p style="font-size: 0.9rem; color: var(--text-main); line-height: 1.6;">
+            {{ college.hostel_information or ('Hostel facilities available on campus for boys and girls.' if college.hostel_available else 'Hostel accommodation not available on campus. Private PG accommodation accessible nearby.') }}
+          </p>
+        </div>
+
+        <div>
+          <h4 style="font-size: 1rem; color: var(--navy-heading); margin-bottom: 0.35rem;">Faculty Qualifications & Mentorship</h4>
+          <p style="font-size: 0.9rem; color: var(--text-main); line-height: 1.6;">
+            {{ college.faculty_information or 'Qualified faculty members compliant with statutory student-to-teacher cadre ratios.' }}
+          </p>
+        </div>
+      </section>
+    </div>
+
+    <!-- Right Column: Fee Breakdown, Placement Sources, AI Guidance Box -->
+    <div>
+      <!-- Fee Breakdown Card -->
+      <div class="card" style="margin-bottom: 2rem; border-top: 4px solid var(--pastel-blue);">
+        <h3 style="font-size: 1.15rem; color: var(--navy-heading); margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+          <span>Fee Structure</span>
+          <span class="badge badge-verified">
+            {% if college.primary_category == 'polytechnic' %}SBTET Standard{% else %}TAFRC Gazette{% endif %}
+          </span>
+        </h3>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">
+          {% if college.primary_category == 'polytechnic' %}
+            Fee values are shown only when the metric has a source and verified status.
+          {% else %}
+            Fee values are shown only when the metric has a source and verified status.
+          {% endif %}
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.25rem;">
+          <div style="display: flex; justify-content: space-between; font-size: 0.9rem; padding-bottom: 0.5rem; border-bottom: 1px dashed var(--border-color);">
+            <span style="color: var(--text-muted);">Annual Tuition Fee:</span>
+            <strong style="color: var(--navy-heading);">
+              {% if college.annual_tuition_fee and metrics_are_verified %}
+                ₹{{ "{:,.0f}".format(college.annual_tuition_fee) }}
+              {% else %}
+                Not published
+              {% endif %}
+            </strong>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; font-size: 0.9rem; padding-bottom: 0.5rem; border-bottom: 1px dashed var(--border-color);">
+            <span style="color: var(--text-muted);">Special / Other Fees:</span>
+            <span style="color: var(--text-main);">
+              {% if college.other_fees and metrics_are_verified %}
+                ₹{{ "{:,.0f}".format(college.other_fees) }}
+              {% else %}
+                Not published
+              {% endif %}
+            </span>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; font-size: 1rem; padding-top: 0.25rem;">
+            <strong style="color: var(--navy-heading);">Estimated Total / Year:</strong>
+            <strong style="color: #0284C7;">
+              {% if college.annual_tuition_fee and college.other_fees and metrics_are_verified %}₹{{ "{:,.0f}".format(college.annual_tuition_fee + college.other_fees) }}{% else %}Not published{% endif %}
+            </strong>
+          </div>
+        </div>
+        {% if metrics_are_verified %}<p class="source-note">Metric source: <a href="{{ college.metrics_source_url }}" target="_blank" rel="noopener">{{ college.metrics_year or 'Open published record' }}</a></p>{% endif %}
+
+        <div style="background: var(--light-blue); padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.8rem; color: var(--navy-heading);">
+          💡 <strong>Telangana Fee Reimbursement (TS ePASS):</strong> Check current government notices for eligibility and reimbursement amounts.
+        </div>
+      </div>
+
+      <!-- Placements & Industry Card -->
+      <div class="card" style="margin-bottom: 2rem; border-top: 4px solid var(--pastel-pink);">
+        <h3 style="font-size: 1.15rem; color: var(--navy-heading); margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+          <span>
+            {% if college.primary_category == 'polytechnic' %}Progression & Training{% elif college.primary_category == 'pharmacy' %}Clinical Rotations{% else %}Placement Audit{% endif %}
+          </span>
+          <span class="badge {% if college.metrics_verification_status == 'Verified' %}badge-verified{% else %}badge-needs-verification{% endif %}">
+            {{ college.metrics_verification_status or 'Not verified' }}
+          </span>
+        </h3>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">
+          Verified institutional career & training data.
+        </p>
+
+        <div style="margin-bottom: 1rem;">
+          <div style="font-size: 0.775rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.4rem; text-transform: uppercase;">
+            {% if college.primary_category == 'polytechnic' %}
+              Diploma Training & Lateral Gateway:
+            {% elif college.primary_category == 'pharmacy' %}
+              Hospital Affiliations & Clinical Sites:
+            {% else %}
+              Key Technology Recruiters:
+            {% endif %}
+          </div>
+          <p style="font-size: 0.875rem; color: var(--text-main); line-height: 1.5;">
+            {{ college.top_recruiters or 'Information verified from official institutional accreditation records.' }}
+          </p>
+        </div>
+
+        {% if college.metrics_source_url %}
+          <a href="{{ college.metrics_source_url }}" target="_blank" rel="noopener" style="font-size: 0.8rem; color: #DB2777; font-weight: 600;">
+            View Official Audit Records ↗
+          </a>
+        {% endif %}
+      </div>
+
+      <!-- Ask AI About This College Widget -->
+      <div class="card" style="background: var(--lavender); border: 1px solid #D8C7F0;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+          <span style="font-size: 1.3rem;">✨</span>
+          <h4 style="font-size: 1rem; color: #5B21B6;">Ask Darpan AI About {{ college.college_code }}</h4>
+        </div>
+        <p style="font-size: 0.825rem; color: #4B5563; margin-bottom: 1rem;">
+          Want to compare {{ college.college_code }} against other Telangana colleges or evaluate your entrance standing?
+        </p>
+        <button 
+          type="button" 
+          class="btn btn-sm btn-primary" 
+          style="width: 100%;"
+          onclick="sendChatPrompt('Tell me about {{ college.college_code }} and compare it with similar colleges'); toggleFloatingChat();"
+        >
+          Analyze {{ college.college_code }} with AI
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

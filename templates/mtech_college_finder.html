@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}M.Tech College Finder — College Darpan{% endblock %}
+{% block content %}
+<div class="container mtech-page">
+  <section class="mtech-hero">
+    <span class="badge badge-soft-blue">Postgraduate Engineering Guide</span>
+    <h1>M.Tech College Finder</h1>
+    <p>Understand postgraduate engineering pathways and visit official university and admission websites. This is an informational directory; programmes and admission rules change by institution and year.</p>
+  </section>
+
+  <section class="mtech-section">
+    <h2>About M.Tech</h2>
+    <p>Master of Technology (M.Tech.) is a postgraduate engineering degree. Many full-time programmes are two years, but duration and structure depend on the programme. Applicants commonly need a relevant engineering or technology bachelor’s degree; exact qualifying degrees, minimum marks and selection rules are set by each institution.</p>
+    <div class="mtech-info-grid">
+      <article class="card"><h3>Admission routes</h3><p>Depending on the institution and seat category, admission may use GATE, Telangana PGECET counselling, or a separate institutional process. Follow the current official notification for application, counselling, documents and deadlines.</p></article>
+      <article class="card"><h3>GATE</h3><p>GATE is a national examination whose score may be used for postgraduate engineering admissions and other purposes. Participating institutions set their own paper, score, eligibility and selection requirements.</p></article>
+      <article class="card"><h3>Telangana PGECET</h3><p>TG PGECET is the state examination and counselling pathway for postgraduate engineering admissions in Telangana. The current counselling portal publishes cycle-specific instructions and seat information.</p></article>
+    </div>
+  </section>
+
+  <section class="mtech-section">
+    <h2>Popular specializations</h2>
+    <ul class="mtech-specializations">
+      <li>Computer Science and Engineering</li><li>Artificial Intelligence and Machine Learning</li><li>Data Science</li><li>VLSI Design</li><li>Structural Engineering</li><li>Power Systems</li><li>Software Engineering</li>
+    </ul>
+    <p>Availability and exact programme titles vary by institution and year. Compare curriculum, faculty, laboratory access, project opportunities, fees, funding and career outcomes using each institution’s current official information.</p>
+  </section>
+
+  <section class="mtech-section">
+    <h2>Choosing an institution and planning costs</h2>
+    <div class="mtech-info-grid">
+      <article class="card"><h3>Government institutions</h3><p>Public universities and centrally funded institutes may offer M.Tech programmes. Confirm current specializations, seat categories, selection rules and fees in the institution’s latest admission notice.</p></article>
+      <article class="card"><h3>Private institutions</h3><p>Some private universities and affiliated colleges may offer postgraduate engineering programmes. Check current AICTE and university information, the exact awarding institution, programme approval and counselling or admission route before applying.</p><a href="https://www.aicte-india.org/" target="_blank" rel="noopener noreferrer">Check AICTE information ↗</a></article>
+      <article class="card"><h3>Fees and scholarships</h3><p>Fees differ by institution, programme and seat category. Compare the current official fee notification, other charges, refund rules and assistantship or scholarship eligibility. A qualifying GATE score may be relevant to financial assistance at participating institutions, but does not guarantee funding.</p></article>
+    </div>
+  </section>
+
+  <section class="mtech-section">
+    <h2>Explore M.Tech Colleges</h2>
+    <div class="mtech-listings">
+      {% for college in colleges %}
+      <article class="card mtech-listing">
+        <div><h3>{{ college.name }}</h3><p class="mtech-location">{{ college.location }}</p><p>{{ college.description }}</p><span class="badge badge-category">{{ college.programmes }}</span></div>
+        <a class="btn btn-primary" href="{{ college.website }}" target="_blank" rel="noopener noreferrer">Visit Official Website ↗</a>
+      </article>
+      {% endfor %}
+    </div>
+    <p class="source-note">Listings are links to official institutional pages. Confirm that the programme and intake you want are offered for the current admission year.</p>
+  </section>
+
+  <section class="mtech-section">
+    <h2>Admission and Entrance Examination Portals</h2>
+    <div class="mtech-portal-grid">
+      {% for portal in portals %}
+      <article class="card"><h3>{{ portal.name }}</h3><p>{{ portal.description }}</p><a href="{{ portal.url }}" target="_blank" rel="noopener noreferrer">Open official portal ↗</a></article>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="mtech-section">
+    <h2>Careers and further study</h2>
+    <p>Graduates may pursue specialist engineering, software and data roles, research and development, teaching (subject to applicable qualifications), or public and private sector opportunities. Further study can include doctoral research and other advanced qualifications. Outcomes depend on specialization, experience, skills and hiring conditions.</p>
+  </section>
+  <section class="mtech-section mtech-checklist">
+    <h2>Before applying</h2>
+    <ul><li>Confirm recognized degree and branch eligibility in the latest prospectus.</li><li>Check the required GATE paper or PGECET subject, score/rank rules and seat category.</li><li>Compare tuition, other charges, assistantships and refund terms from current official notices.</li><li>Review curriculum, labs, projects, faculty, internship and placement reports, noting their reporting year.</li><li>Use only official application and counselling portals, and track document and deadline requirements.</li></ul>
+  </section>
+</div>
+{% endblock %}

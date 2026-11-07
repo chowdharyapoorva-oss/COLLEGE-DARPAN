@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{{ platform_name }} — {{ tagline }}{% endblock %}</title>
+  <meta name="description" content="AI-powered education discovery and transparency platform for Polytechnic, B.Tech Engineering, and Pharmacy admissions in Telangana, India.">
+  
+  <!-- Google Fonts: Inter & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Core Design Tokens & Stylesheet -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  
+  <!-- Chart.js for data visualization -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  {% block head_extra %}{% endblock %}
+</head>
+<body>
+  <a class="skip-link" href="#mainContent">Skip to main content</a>
+
+  <!-- Persistent Header / Navbar -->
+  <header class="navbar">
+    <div class="container navbar-inner">
+      <a href="{{ url_for('index') }}" class="brand-logo">
+        <div class="brand-icon">🎓</div>
+        <div>
+          <span>College Darpan</span>
+          <div style="font-size: 0.65rem; color: #DB2777; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;">Telangana Education Platform</div>
+        </div>
+      </a>
+      
+
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle navigation menu">☰</button>
+
+      <ul class="nav-links" id="navLinks">
+        <li><a href="{{ url_for('index') }}" class="nav-link {% if request.path == '/' %}active{% endif %}">Home</a></li>
+        <li><a href="{{ url_for('colleges_directory') }}" class="nav-link {% if request.path == '/colleges' %}active{% endif %}">Colleges</a></li>
+        <li><a href="{{ url_for('polytechnic_page') }}" class="nav-link {% if request.path == '/polytechnic' %}active{% endif %}">Polytechnic</a></li>
+        <li><a href="{{ url_for('engineering_page') }}" class="nav-link {% if request.path == '/engineering' %}active{% endif %}">B.Tech</a></li>
+        <li><a href="{{ url_for('pharmacy_page') }}" class="nav-link {% if request.path == '/pharmacy' %}active{% endif %}">Pharmacy</a></li>
+        <li><a href="{{ url_for('mtech_college_finder') }}" class="nav-link {% if request.path == '/mtech-college-finder' %}active{% endif %}">M.Tech College Finder</a></li>
+        <li><a href="{{ url_for('recommendations') }}" class="nav-link {% if request.path == '/recommendations' %}active{% endif %}">Recommendations</a></li>
+        <li>
+          <a href="{{ url_for('compare_page') }}" class="nav-link {% if request.path == '/compare' %}active{% endif %}">
+            Compare 
+            <span class="badge badge-soft-pink compare-count-badge{% if compare_count %} is-visible{% endif %}" aria-live="polite" style="margin-left: 4px;">{{ compare_count }}</span>
+          </a>
+        </li>
+        <li><a href="{{ url_for('admission_guide') }}" class="nav-link {% if request.path == '/admission-guide' %}active{% endif %}">Admissions</a></li>
+        <li><a href="{{ url_for('data_methodology') }}" class="nav-link {% if request.path == '/data-methodology' %}active{% endif %}">Methodology</a></li>
+        <li><a href="{{ url_for('chatbot_page') }}" class="nav-link {% if request.path == '/chatbot' %}active{% endif %}">AI Assistant</a></li>
+        <li><a href="{{ url_for('about') }}" class="nav-link {% if request.path == '/about' %}active{% endif %}">About</a></li>
+        <li style="margin-left: 0.25rem;">
+          <a href="{{ url_for('recommendations') }}" class="nav-cta">Find My College</a>
+        </li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- Flash Messages / Notifications -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="container" style="margin-top: 1.5rem;">
+        {% for category, message in messages %}
+          <div class="card" style="border-left: 4px solid var(--pastel-pink); padding: 1rem 1.5rem; margin-bottom: 1rem;">
+            <strong>{{ message }}</strong>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <!-- Main Content Block -->
+  <main id="mainContent" style="flex: 1;">
+    {% block content %}
+    {% if error_title %}
+      <div class="container" style="text-align: center; padding: 5rem 1rem;">
+        <h1 style="font-size: 2.5rem; margin-bottom: 1rem; color: #DB2777;">{{ error_title }}</h1>
+        <p style="color: var(--text-muted); margin-bottom: 2rem;">{{ error_msg }}</p>
+        <a href="{{ url_for('index') }}" class="btn btn-primary">Return to Home</a>
+      </div>
+    {% endif %}
+    {% endblock %}
+  </main>
+
+  <!-- Floating Chatbot Launcher & Popup -->
+  <div class="floating-chat-launcher">
+    <button class="chat-launch-btn" onclick="toggleFloatingChat()" title="Ask Darpan AI Assistant" aria-label="Open AI Assistant">
+      💬
+    </button>
+  </div>
+
+  <div class="floating-chat-popup" id="floatingChatPopup">
+    <div class="chat-popup-header">
+      <div style="display: flex; align-items: center; gap: 0.6rem;">
+        <span style="font-size: 1.25rem;">✨</span>
+        <div>
+          <strong style="font-size: 0.95rem; color: var(--navy-heading);">Darpan AI Assistant</strong>
+          <div style="font-size: 0.725rem; color: var(--text-muted);">Rule-backed offline Telangana counselor</div>
+        </div>
+      </div>
+      <button onclick="toggleFloatingChat()" style="background:none; border:none; font-size:1.2rem; cursor:pointer; color:var(--text-muted);">✕</button>
+    </div>
+    
+    <div class="chat-messages-container" id="floatingChatMessages">
+      <div class="chat-bubble chat-bubble-assistant">
+        Hello! I am your <strong>Darpan AI Assistant</strong>. Ask me anything about Telangana Polytechnic, B.Tech Engineering, or Pharmacy institutions:
+        <div style="margin-top: 8px;">
+          <button class="quick-action-pill" onclick="sendChatPrompt('Government polytechnics in Hyderabad')">Polytechnics in Hyderabad</button>
+          <button class="quick-action-pill" onclick="sendChatPrompt('Which colleges offer AIML in Hyderabad?')">AIML in Hyderabad?</button>
+          <button class="quick-action-pill" onclick="sendChatPrompt('Colleges for ECET lateral entry')">ECET Lateral Entry</button>
+          <button class="quick-action-pill" onclick="sendChatPrompt('Tell me about Pharmacy colleges')">Pharmacy Colleges</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="chat-input-area">
+      <input type="text" class="chat-text-input" id="floatingChatInput" placeholder="Ask a question..." autocomplete="off">
+      <button class="btn btn-sm btn-primary" id="floatingChatSendBtn" style="border-radius: var(--radius-full);">Send</button>
+    </div>
+  </div>
+
+  <!-- Persistent Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <div class="brand-logo" style="margin-bottom: 0.75rem;">
+            <div class="brand-icon">🎓</div>
+            <span>College Darpan</span>
+          </div>
+          <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; max-width: 320px;">
+            An AI-powered transparency, discovery, and recommendation platform for educational institutions in Telangana, India. Covering Polytechnic, B.Tech Engineering, and Pharmacy.
+          </p>
+          <div style="margin-top: 1rem;">
+            <span class="badge badge-verified">Zero-Fabrication Data Policy</span>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4>Education Streams</h4>
+          <ul>
+            <li><a href="{{ url_for('polytechnic_page') }}">Polytechnic / Diploma Colleges</a></li>
+            <li><a href="{{ url_for('engineering_page') }}">B.Tech / Engineering Colleges</a></li>
+            <li><a href="{{ url_for('pharmacy_page') }}">Pharmacy (B.Pharm / Pharm.D)</a></li>
+            <li><a href="{{ url_for('mtech_colleges_finder') }}">M.Tech College Finder</a></li>
+            <li><a href="{{ url_for('colleges_directory') }}">All Institutions Directory</a></li>
+            <li><a href="{{ url_for('recommendations') }}">AI College Recommendations</a></li>
+            <li><a href="{{ url_for('compare_page') }}">Side-by-Side Comparison</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Telangana Admissions</h4>
+          <ul>
+            <li><a href="{{ url_for('admission_guide') }}">TS POLYCET Admission Guide</a></li>
+            <li><a href="{{ url_for('admission_guide') }}">TS ECET Diploma Lateral Entry</a></li>
+            <li><a href="{{ url_for('admission_guide') }}">TS EAPCET 1st Year Engineering</a></li>
+            <li><a href="{{ url_for('admission_guide') }}">Pharmacy (PCI / EAPCET) Guide</a></li>
+            <li><a href="https://tgche.ac.in" target="_blank" rel="noopener">TGCHE Official Portal ↗</a></li>
+            <li><a href="https://sbtet.telangana.gov.in" target="_blank" rel="noopener">SBTET Telangana ↗</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Platform & Methodology</h4>
+          <ul>
+           <li><a href="{{ url_for('data_methodology') }}">Data Sources & Verification</a></li>
+            <li><a href="{{ url_for('about') }}#methodology">AI Recommendation Scoring</a></li>
+            <li><a href="{{ url_for('chatbot_page') }}">Darpan AI Assistant (Offline)</a></li>
+            <li><a href="{{ url_for('about') }}">About College Darpan</a></li>
+            <li><a href="{{ url_for('about') }}#contact">Academic Project Details</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>
+          © 2026 <strong>College Darpan</strong>. Third-Year AIML Diploma Capstone Project.
+        </div>
+      </div>
+
+      <div class="disclaimer-text">
+        <strong>Data Transparency Disclaimer:</strong> College Darpan aggregates publicly accessible data from the Telangana Council of Higher Education (TGCHE), the State Board of Technical Education and Training (SBTET), the Telangana Admission and Fee Regulatory Committee (TAFRC), and the Pharmacy Council of India (PCI). Cutoffs, fees, and seat allocations are indicative and subject to official annual government notifications. We do not guarantee admission to any institution.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+  {% block scripts_extra %}{% endblock %}
+</body>
+</html>

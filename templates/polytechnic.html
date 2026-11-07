@@ -1,0 +1,234 @@
+{% extends "base.html" %}
+
+{% block title %}Polytechnic / Diploma Colleges in Telangana (TS POLYCET) — College Darpan{% endblock %}
+
+{% block content %}
+<div class="container" style="margin-top: 2rem; margin-bottom: 4rem;">
+
+  <!-- Hero Header Banner for Polytechnic -->
+  <div class="card" style="background: var(--hero-gradient); border: 2px solid var(--border-color); padding: 2.25rem; margin-bottom: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1.5rem;">
+      <div style="max-width: 760px;">
+        <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.5rem;">
+          <span class="badge badge-soft-blue" style="font-size: 0.8rem; font-weight: 700;">State Board of Technical Education & Training (SBTET)</span>
+          <span class="badge badge-verified">TS POLYCET Gateway</span>
+        </div>
+        <h1 style="font-size: 2.2rem; color: var(--navy-heading); margin-bottom: 0.75rem; line-height: 1.25;">
+          Polytechnic & Diploma Colleges in Telangana
+        </h1>
+        <p style="color: var(--text-muted); font-size: 1rem; line-height: 1.6;">
+          Browse government and private polytechnic institution records across Telangana. The SBTET 2026–27 source link is shown for newly added listings; confirm current programmes and admissions before applying.
+        </p>
+      </div>
+
+      <!-- Quick Action / Lateral Entry Info Pill -->
+      <div style="background: #FFFFFF; border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 1.25rem; min-width: 250px; text-align: center; box-shadow: var(--shadow-sm);">
+        <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Fee information</div>
+        <div style="font-size: 1.1rem; font-weight: 800; color: var(--lilac-deep); margin: 4px 0;">Source-linked records</div>
+        <div style="font-size: 0.75rem; color: var(--text-muted);">Check the year and official source</div>
+        <div style="margin-top: 0.75rem;">
+          <a href="{{ url_for('admission_guide') }}#polycet" class="btn btn-secondary btn-sm" style="width: 100%;">POLYCET Guide →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Stats Pills -->
+    <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1.25rem;">
+      <div style="font-size: 0.85rem; color: var(--navy-heading);">
+        <strong>🏛️ {{ total_count }}</strong> Polytechnic Institutions Listed
+      </div>
+      <div style="font-size: 0.85rem; color: var(--navy-heading);">
+        <strong>⚙️ {{ branches|length }}</strong> Diploma Engineering Streams
+      </div>
+      <div style="font-size: 0.85rem; color: var(--navy-heading);">
+        <strong>🎯 Admission:</strong> TS POLYCET (10th SSC Merit)
+      </div>
+      <div style="font-size: 0.85rem; color: var(--navy-heading);">
+        <strong>🚀 Pathway:</strong> Direct 2nd-Year B.Tech via TS ECET
+      </div>
+    </div>
+  </div>
+
+  <div class="directory-layout">
+    <!-- Filter Sidebar -->
+    <aside class="filter-sidebar">
+      <div class="filter-title">
+        <span>Polytechnic Filters</span>
+        <a href="{{ url_for('polytechnic_page') }}" style="font-size: 0.8rem; color: #DB2777; font-weight: 600;">Reset Filters</a>
+      </div>
+
+      <form action="{{ url_for('polytechnic_page') }}" method="GET">
+        <!-- Search Keyword -->
+        <div class="filter-group">
+          <label class="filter-label" for="polySearch">Keyword Search</label>
+          <input 
+            type="text" 
+            name="search" 
+            id="polySearch" 
+            class="form-input" 
+            placeholder="e.g. Masab Tank, Ramanthapur, CME..." 
+            value="{{ active_filters.search }}"
+          >
+        </div>
+
+        <!-- District Filter -->
+        <div class="filter-group">
+          <label class="filter-label" for="polyDistrict">District</label>
+          <select name="district" id="polyDistrict" class="filter-select" onchange="this.form.submit()">
+            <option value="All">All Districts</option>
+            {% for d in districts %}
+              <option value="{{ d }}" {% if active_filters.district == d %}selected{% endif %}>{{ d }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Branch / Discipline -->
+        <div class="filter-group">
+          <label class="filter-label" for="polyBranch">Diploma Discipline</label>
+          <select name="branch" id="polyBranch" class="filter-select" onchange="this.form.submit()">
+            <option value="All">All Diploma Streams</option>
+            {% for b in branches %}
+              <option value="{{ b.branch_code }}" {% if active_filters.branch == b.branch_code %}selected{% endif %}>
+                {{ b.branch_name }} ({{ b.branch_code }})
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Management Type -->
+        <div class="filter-group">
+          <label class="filter-label" for="polyMgmt">Management Type</label>
+          <select name="management_type" id="polyMgmt" class="filter-select" onchange="this.form.submit()">
+            <option value="All">All Management Types</option>
+            {% for m in mgmt_types %}
+              <option value="{{ m }}" {% if active_filters.management_type == m %}selected{% endif %}>{{ m }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Max Tuition Fee -->
+        <div class="filter-group">
+          <label class="filter-label" for="polyMaxFee">Max Annual Tuition Fee</label>
+          <select name="max_fee" id="polyMaxFee" class="filter-select" onchange="this.form.submit()">
+            <option value="">Any Fee</option>
+            <option value="5000" {% if active_filters.max_fee == '5000' %}selected{% endif %}>Under ₹5,000 (Government Institutions)</option>
+            <option value="20000" {% if active_filters.max_fee == '20000' %}selected{% endif %}>Under ₹20,000 (Private Subsidized)</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+          Apply Filters
+        </button>
+      </form>
+
+      <!-- Polytechnic Admission Advice Box -->
+      <div style="background: var(--light-blue); border: 1px solid var(--pastel-blue); border-radius: var(--radius-md); padding: 1rem; margin-top: 1.5rem; font-size: 0.85rem; color: var(--navy-heading);">
+        <strong style="display:block; margin-bottom: 4px;">💡 TS POLYCET Guidance:</strong>
+        Scholarship eligibility and fee amounts depend on current government notices. Check SBTET and Telangana ePASS sources before applying.
+      </div>
+    </aside>
+
+    <!-- Main Results Area -->
+    <main>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+        <span style="font-size: 0.95rem; color: var(--text-muted);">
+          Showing <strong>{{ total_count }}</strong> polytechnic institutions
+        </span>
+        <div style="display: flex; gap: 0.5rem;">
+          <a href="{{ url_for('colleges_directory') }}" class="btn btn-secondary btn-sm">All Categories Directory</a>
+        </div>
+      </div>
+
+      {% if colleges and colleges|length > 0 %}
+        <div class="college-grid">
+          {% for col in colleges %}
+            <article class="college-card">
+              <div class="card-header-row">
+                <span class="college-code-pill">{{ col.college_code }}</span>
+                <span class="badge {% if col.management_type == 'Government' %}badge-verified{% else %}badge-soft-blue{% endif %}">
+                  {{ col.management_type }}
+                </span>
+                <span class="badge badge-lavender">{{ col.approval_body or 'SBTET' }}</span>
+              </div>
+
+              <h3 class="college-card-title">
+                <a href="{{ url_for('college_detail', college_id=col.id) }}">
+                  {{ col.name }}
+                </a>
+              </h3>
+
+              <div class="college-card-meta">
+                <span>📍 {{ col.district }}</span>
+                <span>•</span>
+                <span>📅 Est. {{ col.est_year or 'N/A' }}</span>
+                {% if col.hostel_available %}
+                  <span>•</span>
+                  <span style="color: #1E6B47; font-weight: 600;">🏠 Hostel Available</span>
+                {% endif %}
+              </div>
+
+              <!-- Key Metrics Grid -->
+              <div class="metrics-grid">
+                <div class="metric-box">
+                  <span class="metric-label">Annual Tuition Fee</span>
+                  <span class="metric-val" style="color: #0284C7;">
+                    {% if col.annual_tuition_fee and col.metrics_verification_status == 'Verified' and col.metrics_source_url and col.metrics_academic_year %}
+                      ₹{{ "{:,.0f}".format(col.annual_tuition_fee) }}
+                    {% else %}
+                      Not verified
+                    {% endif %}
+                  </span>
+                </div>
+                <div class="metric-box">
+                  <span class="metric-label">Admission Gateway</span>
+                  <span class="metric-val" style="color: #1E6B47; font-size: 0.85rem;">
+                    TS POLYCET
+                  </span>
+                </div>
+              </div>
+
+              <!-- Diploma Branches Chips -->
+              <div class="branches-preview-wrap">
+                <span style="font-size: 0.725rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; display: block; margin-bottom: 4px;">
+                  Offered 3-Year Diploma Programs:
+                </span>
+                <div class="branch-chips-list">
+                  {% for b in col.branches %}
+                    <span class="branch-chip" title="{{ b.branch_name }} ({{ b.branch_code }}) — {{ b.degree_level or 'Diploma' }}">
+                      {{ b.branch_code }}
+                    </span>
+                  {% endfor %}
+                </div>
+              </div>
+
+              <!-- Card Actions -->
+              <div class="card-action-footer">
+                <a href="{{ url_for('college_detail', college_id=col.id) }}" class="btn btn-primary btn-sm" style="flex: 1;">
+                  View Institution Profile →
+                </a>
+                <button 
+                  type="button" 
+                  class="btn btn-secondary btn-sm" 
+                  onclick="CompareManager.add({{ col.id }}, '{{ col.college_code }}')"
+                  title="Add to compare tray"
+                >
+                  + Compare
+                </button>
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="card empty-state-box">
+          <div style="font-size: 3rem; margin-bottom: 1rem;">🏛️</div>
+          <h3 style="font-size: 1.4rem; color: var(--navy-heading); margin-bottom: 0.5rem;">No Polytechnic Colleges Matched</h3>
+          <p style="color: var(--text-muted); margin-bottom: 1.5rem; max-width: 480px; margin-left: auto; margin-right: auto;">
+            We couldn't find any polytechnic colleges matching your active filter criteria. Try resetting filters or expanding district selection.
+          </p>
+          <a href="{{ url_for('polytechnic_page') }}" class="btn btn-primary">Reset Polytechnic Filters</a>
+        </div>
+      {% endif %}
+    </main>
+  </div>
+</div>
+{% endblock %}

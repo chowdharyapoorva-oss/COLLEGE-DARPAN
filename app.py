@@ -32,6 +32,8 @@ def prepare_database():
     # Idempotent, additive data update: preserves all existing records and metrics.
     import_sbtet_directory()
 
+prepare_database()
+
 # Context processor for shared template variables
 @app.context_processor
 def inject_global_data():
@@ -656,5 +658,5 @@ def internal_error(error):
                            error_msg="An internal error occurred. Please try again or return home."), 500
 
 if __name__ == "__main__":
-    prepare_database()
-    app.run(host="127.0.0.1", port=5000, debug=app.config["DEBUG"])
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=app.config["DEBUG"])

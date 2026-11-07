@@ -1,0 +1,259 @@
+{% extends "base.html" %}
+
+{% block title %}Compare Telangana Colleges (Polytechnic, B.Tech, Pharmacy) — College Darpan{% endblock %}
+
+{% macro evidence_source(item) -%}
+  <div class="comparison-source">{{ item.status }} · {{ item.academic_year }} · <a href="{{ item.source_url }}" target="_blank" rel="noopener noreferrer">{{ item.source_name }} ↗</a>{% if item.scope %}<br>{{ item.scope }}{% endif %}</div>
+{%- endmacro %}
+
+{% block content %}
+<div class="container" style="margin-top: 2rem; margin-bottom: 4rem;">
+  <!-- Header & College Selector -->
+  <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <span class="badge badge-soft-blue" style="margin-bottom: 0.5rem;">Side-by-Side Analysis</span>
+      <h1 style="font-size: 2.2rem; color: var(--navy-heading);">Compare Colleges</h1>
+      <p style="color: var(--text-muted); font-size: 0.95rem;">
+        Compare tuition fees, placements, branches, approvals, and cutoffs side-by-side (up to 4 institutions).
+      </p>
+    </div>
+
+    <!-- Quick Add College Dropdown -->
+    {% if compared_colleges|length < 4 %}
+      <div style="display: flex; align-items: center; gap: 0.5rem;">
+        <select id="addCollegeSelect" class="filter-select" style="width: auto; min-width: 260px;">
+          <option value="">+ Add an institution to compare...</option>
+          {% for c in all_colleges %}
+            {% if c.id not in selected_ids %}
+              <option value="{{ c.id }}">{{ c.college_code }} — {{ c.name }} ({{ c.primary_category|capitalize }})</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="addCollegeToCompareFromSelect()">
+          Add
+        </button>
+      </div>
+    {% endif %}
+  </div>
+
+  {% if compared_colleges|length >= 2 %}
+    <!-- Help Me Understand This Comparison AI Explainer Banner -->
+    <div style="background: var(--hero-gradient); border: 2px solid var(--border-color); border-radius: var(--radius-xl); padding: 1.5rem 2rem; margin-bottom: 2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; box-shadow: var(--shadow-sm);">
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <div style="width: 48px; height: 48px; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; box-shadow: var(--shadow-sm);">
+          ✨
+        </div>
+        <div>
+          <h3 style="font-size: 1.15rem; color: var(--navy-heading);">Need help evaluating these options?</h3>
+          <p style="font-size: 0.875rem; color: var(--text-muted); margin-top: 2px;">
+            Let Darpan AI Assistant analyze key trade-offs between tuition expenses, academic reputation, and career placement outcomes.
+          </p>
+        </div>
+      </div>
+
+      <button 
+        type="button" 
+        class="btn btn-primary"
+        onclick="askChatbotToExplainComparison([{% for c in compared_colleges %}'{{ c.college_code }}'{% if not loop.last %},{% endif %}{% endfor %}])"
+      >
+        Help Me Understand This Comparison
+      </button>
+    </div>
+
+    <!-- Comparison Table (Responsive) -->
+    <p class="comparison-evidence-note">Figures appear only when a field has a specific source and reporting year. Legacy database values without matching evidence are retained for review but are not presented as verified facts.</p>
+    <div class="comparison-wrapper">
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th style="min-width: 200px;">Institution & Actions</th>
+            {% for c in compared_colleges %}
+              <td style="min-width: 250px;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+                  <span class="college-code-pill">{{ c.college_code }}</span>
+                  <button 
+                    type="button" 
+                    onclick="removeComparedCollege({{ c.id }})" 
+                    style="background:none; border:none; color:#EF4444; font-size:0.8rem; cursor:pointer; font-weight:700;"
+                    title="Remove from comparison"
+                  >
+                    ✕ Remove
+                  </button>
+                </div>
+                <h4 style="font-size: 1.1rem; color: var(--navy-heading); margin-bottom: 0.35rem;">{{ c.name }}</h4>
+                <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+                  📍 {{ c.district }} • {{ c.management_type or c.institution_type }}
+                </div>
+                {% set website_evidence = (c.comparison_evidence or {}).get('official_website') %}
+                {% if website_evidence %}{{ evidence_source(website_evidence) }}{% else %}<div class="comparison-pending">Official website pending verification.</div>{% endif %}
+                <a href="{{ url_for('college_detail', college_id=c.id) }}" class="btn btn-sm btn-secondary" style="font-size: 0.8rem;">
+                  View Full Profile
+                </a>
+              </td>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>Stream and Regulatory Information</th>
+            {% for c in compared_colleges %}
+              <td>
+                <span class="badge {% if c.primary_category == 'polytechnic' %}badge-soft-pink{% elif c.primary_category == 'pharmacy' %}badge-lavender{% else %}badge-soft-blue{% endif %}">{{ c.primary_category|capitalize }}</span>
+                <div class="comparison-pending">Approval and affiliation fields need a field-specific source check.</div>
+              </td>
+            {% endfor %}
+          </tr>
+          <tr>
+            <th>Annual Tuition Fee</th>
+            {% for c in compared_colleges %}
+              {% set evidence = c.comparison_evidence or {} %}
+              <td class="diff-highlight">
+                {% if evidence.get('annual_tuition_fee') %}
+                  {% set fee = evidence.annual_tuition_fee %}
+                  <strong class="comparison-value">{{ fee.value }}</strong>
+                  {{ evidence_source(fee) }}
+                {% else %}<span class="comparison-pending">No source-backed annual fee in current records.</span>{% endif %}
+                {% for field, item in evidence.items() if field in ['polytechnic_development_fee', 'micro_insurance_fee', 'telangana_green_fund', 'fee_category', 'historical_counselling_fee'] %}
+                  <div><strong>{{ field|replace('_', ' ')|title }}:</strong> {{ item.value }}{{ evidence_source(item) }}</div>
+                {% endfor %}
+              </td>
+            {% endfor %}
+          </tr>
+          <tr>
+            <th>Placement Outcomes</th>
+            {% for c in compared_colleges %}
+              {% set evidence = c.comparison_evidence or {} %}
+              <td>
+                {% if evidence.get('placement_percentage') %}
+                  {% set item = evidence.placement_percentage %}<div><strong>Placement rate:</strong> {{ item.value }}% <span class="comparison-status">{{ item.status }} · {{ item.academic_year }}</span></div>
+                {% endif %}
+                {% if evidence.get('placed_students') %}
+                  {% set item = evidence.placed_students %}<div><strong>Graduates placed:</strong> {{ item.value }}</div>
+                {% endif %}
+                {% if evidence.get('average_package') %}
+                  {% set item = evidence.average_package %}<div><strong>Average package:</strong> ₹{{ item.value }} LPA <span class="comparison-status">{{ item.status }} · {{ item.academic_year }}</span></div>
+                {% endif %}
+                {% if evidence.get('median_package') %}
+                  {% set item = evidence.median_package %}<div><strong>Median package:</strong> ₹{{ item.value }} LPA <span class="comparison-status">{{ item.status }} · {{ item.academic_year }}</span></div>
+                {% endif %}
+                {% if evidence.get('highest_package') %}
+                  {% set item = evidence.highest_package %}<div><strong>Highest package:</strong> ₹{{ item.value }} LPA <span class="comparison-status">{{ item.status }} · {{ item.academic_year }}</span></div>
+                {% endif %}
+                {% set source_item = evidence.get('placement_percentage') or evidence.get('placed_students') or evidence.get('average_package') or evidence.get('median_package') or evidence.get('highest_package') %}
+                {% if source_item %}{{ evidence_source(source_item) }}{% else %}<span class="comparison-pending">No source-backed placement figures in current records.</span>{% endif %}
+              </td>
+            {% endfor %}
+          </tr>
+          <tr>
+            <th>Recruiters and Training Support</th>
+            {% for c in compared_colleges %}
+              {% set evidence = c.comparison_evidence or {} %}
+              <td>
+                {% if evidence.get('companies_visited') %}
+                  {% set item = evidence.companies_visited %}<div><strong>Employer activity:</strong> {{ item.value }}</div>{{ evidence_source(item) }}
+                {% else %}<div class="comparison-pending">Recruiter names are not source-backed in current records.</div>{% endif %}
+                {% if evidence.get('internship_support') %}
+                  {% set item = evidence.internship_support %}<div><strong>Training:</strong> {{ item.value }}</div>{{ evidence_source(item) }}
+                {% else %}<div class="comparison-pending">No documented training figure in current comparison sources.</div>{% endif %}
+              </td>
+            {% endfor %}
+          </tr>
+          <tr>
+            <th>Programmes and Branches Listed</th>
+            {% for c in compared_colleges %}
+              <td>
+                {% if c.branches %}<div class="branch-chip-list">{% for b in c.branches %}<span class="branch-chip" title="{{ b.branch_name }}">{{ b.branch_name }}{% if b.seats_intake %} — {{ b.seats_intake }} seats{% endif %}{% if b.academic_year %} ({{ b.academic_year }}{% if b.academic_year == '2026-27' %}, tentative intake{% endif %}){% endif %}</span>{% endfor %}</div>
+                {% else %}<span class="comparison-pending">No programme rows in current records.</span>{% endif %}
+                {% set programme_evidence = (c.comparison_evidence or {}).get('programme_information') %}{% if programme_evidence %}{{ evidence_source(programme_evidence) }}{% else %}<div class="comparison-pending">Intake rows are local sourced listings; check each row's year and tentative status.</div>{% endif %}
+              </td>
+            {% endfor %}
+          </tr>
+          <tr>
+            <th>Admission Eligibility and Historical Cutoffs</th>
+            {% for c in compared_colleges %}
+              <td>
+                {% set admission_evidence = (c.comparison_evidence or {}).get('admission_eligibility') %}{% if admission_evidence %}<div><strong>Eligibility:</strong> {{ admission_evidence.value }}</div>{{ evidence_source(admission_evidence) }}{% endif %}
+                {% set eligibility = c.branches|selectattr('eligibility_criteria')|map(attribute='eligibility_criteria')|unique|list %}
+                {% if eligibility %}<div><strong>Eligibility listed:</strong> {{ eligibility[:2]|join('; ') }}</div><div class="comparison-pending">Confirm against the current admission notice.</div>{% endif %}
+                {% set cutoff_source_found = namespace(valid=false) %}
+                {% for cut in c.cutoffs[:4] %}
+                  {% if cut.source_url and cut.source_url.startswith('http') and cut.verification_status == 'Verified' %}
+                    {% set cutoff_source_found.valid = true %}<div>{{ cut.exam_name }} / {{ cut.branch_code }}: {{ "{:,}".format(cut.cutoff_rank) }} ({{ cut.category }}, {{ cut.admission_year }}) · <a href="{{ cut.source_url }}" target="_blank" rel="noopener noreferrer">Source ↗</a></div>
+                  {% endif %}
+                {% endfor %}
+                {% if not cutoff_source_found.valid %}<div class="comparison-pending">No cutoff with a valid source URL in current records.</div>{% endif %}
+              </td>
+            {% endfor %}
+          </tr>
+          <tr>
+            <th>Hostel and Laboratory Facilities</th>
+            {% for c in compared_colleges %}
+              <td>
+                {% set evidence = c.comparison_evidence or {} %}{% set facility_count = namespace(n=0) %}
+                {% for field, item in evidence.items() if field in ['hostel', 'laboratories', 'library', 'workshops', 'computer_facilities', 'transport', 'infrastructure'] %}
+                  {% set facility_count.n = facility_count.n + 1 %}<div><strong>{{ field|replace('_', ' ')|title }}:</strong> {{ item.value }}{{ evidence_source(item) }}</div>
+                {% endfor %}
+                {% if not facility_count.n %}<span class="comparison-pending">No field-specific source for hostel or laboratory details is recorded.</span>{% endif %}
+              </td>
+            {% endfor %}
+          </tr>
+          {% if compared_colleges|selectattr('primary_category', 'equalto', 'pharmacy')|list %}
+          <tr>
+            <th>Pharmacy Hospital Affiliation and Clinical Training</th>
+            {% for c in compared_colleges %}
+              <td>{% if c.primary_category == 'pharmacy' %}<span class="comparison-pending">No field-specific source recorded.</span>{% else %}<span class="comparison-status">Not applicable</span>{% endif %}</td>
+            {% endfor %}
+          </tr>
+          {% endif %}
+          <tr>
+            <th>Accreditation and Establishment</th>
+            {% for c in compared_colleges %}
+              <td><span class="comparison-pending">Accreditation, establishment year and campus area need source verification.</span></td>
+            {% endfor %}
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Clear Comparison Action -->
+    <div style="margin-top: 1.5rem; text-align: right;">
+      <button type="button" class="btn btn-secondary btn-sm" onclick="clearAllComparedColleges()">
+        Clear All Compared Colleges
+      </button>
+    </div>
+
+  {% elif compared_colleges|length == 1 %}
+    <div class="card empty-state-box">
+      <h3 style="font-size: 1.4rem; color: var(--navy-heading); margin-bottom: 0.5rem;">Add one more college to compare</h3>
+      <p style="color: var(--text-muted); margin-bottom: 0.5rem;">{{ compared_colleges[0].college_code }} — {{ compared_colleges[0].name }} is selected. Choose another institution above to view the comparison.</p>
+      <p style="color: var(--text-muted);">Your selection is saved for this browser session.</p>
+    </div>
+
+  {% else %}
+    <!-- Empty State -->
+    <div class="card empty-state-box">
+      <div style="font-size: 3rem; margin-bottom: 1rem;">⚖️</div>
+      <h3 style="font-size: 1.5rem; color: var(--navy-heading); margin-bottom: 0.5rem;">No Colleges in Comparison Tray</h3>
+      <p style="color: var(--text-muted); max-width: 480px; margin: 0 auto 1.5rem; line-height: 1.6;">
+        Select 2 to 4 institutions from the directory, polytechnic, engineering, or pharmacy pages to compare their available records side-by-side.
+      </p>
+      
+      <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
+        <a href="{{ url_for('colleges_directory') }}" class="btn btn-primary">
+          Explore Colleges Directory
+        </a>
+        <a href="{{ url_for('polytechnic_page') }}" class="btn btn-secondary">
+          Polytechnic Colleges
+        </a>
+        <a href="{{ url_for('pharmacy_page') }}" class="btn btn-secondary">
+          Pharmacy Colleges
+        </a>
+      </div>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts_extra %}
+<script src="{{ url_for('static', filename='js/compare.js') }}"></script>
+{% endblock %}

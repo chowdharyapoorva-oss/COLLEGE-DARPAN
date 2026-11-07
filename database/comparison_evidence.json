@@ -1,0 +1,66 @@
+{
+  "JNTUH": {
+    "placement_percentage": {
+      "value": 65,
+      "unit": "%",
+      "status": "Historical",
+      "academic_year": "2024-25",
+      "source_name": "JNTUH UCE Hyderabad, Training & Placement statistics",
+      "source_url": "https://jntuhceh.ac.in/placements?s=2026",
+      "scope": "Institution-reported summary; programme mix is not specified in the summary."
+    },
+    "average_package": {
+      "value": 7.0,
+      "unit": "LPA",
+      "status": "Historical",
+      "academic_year": "2024-25",
+      "source_name": "JNTUH UCE Hyderabad, Training & Placement statistics",
+      "source_url": "https://jntuhceh.ac.in/placements?s=2026",
+      "scope": "Institution-reported summary; programme mix is not specified in the summary."
+    },
+    "highest_package": {
+      "value": 26.35,
+      "unit": "LPA",
+      "status": "Historical",
+      "academic_year": "2024-25",
+      "source_name": "JNTUH UCE Hyderabad, Training & Placement statistics",
+      "source_url": "https://jntuhceh.ac.in/placements?s=2026",
+      "scope": "Institution-reported summary; programme mix is not specified in the summary."
+    },
+    "companies_visited": {
+      "value": "110+ companies visited",
+      "status": "Historical",
+      "academic_year": "2024-25",
+      "source_name": "JNTUH UCE Hyderabad, Training & Placement statistics",
+      "source_url": "https://jntuhceh.ac.in/placements?s=2026",
+      "scope": "Institution-reported summary; programme mix is not specified in the summary."
+    },
+    "internship_support": {
+      "value": "60+ paid internships reported",
+      "status": "Historical",
+      "academic_year": "2024-25",
+      "source_name": "JNTUH UCE Hyderabad, Training & Placement statistics",
+      "source_url": "https://jntuhceh.ac.in/placements?s=2026",
+      "scope": "Institution-reported summary; programme mix is not specified in the summary."
+    }
+  },
+  "OUCE": {
+    "placed_students": {
+      "value": "264 of 354 graduates placed (74.6%, calculated)",
+      "status": "Estimated",
+      "academic_year": "2024-25",
+      "source_name": "NIRF 2026 submitted institution data, University College of Engineering, Osmania University",
+      "source_url": "https://www.uceou.edu/22-04-2026/UCE%20OU%20NIRF%20-2026%20SUBMITTED%20REPORT.pdf",
+      "scope": "UG four-year engineering cohort; rate calculated from placed students and graduates."
+    },
+    "median_package": {
+      "value": 6.0,
+      "unit": "LPA",
+      "status": "Historical",
+      "academic_year": "2024-25",
+      "source_name": "NIRF 2026 submitted institution data, University College of Engineering, Osmania University",
+      "source_url": "https://www.uceou.edu/22-04-2026/UCE%20OU%20NIRF%20-2026%20SUBMITTED%20REPORT.pdf",
+      "scope": "UG four-year engineering cohort."
+    }
+  }
+}

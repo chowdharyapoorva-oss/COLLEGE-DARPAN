@@ -1,0 +1,244 @@
+{% extends "base.html" %}
+
+{% block title %}B.Tech / Engineering Colleges in Telangana (TS EAPCET & TS ECET) — College Darpan{% endblock %}
+
+{% block content %}
+<div class="container" style="margin-top: 2rem; margin-bottom: 4rem;">
+
+  <!-- Hero Header Banner for Engineering -->
+  <div class="card" style="background: var(--hero-gradient); border: 2px solid var(--border-color); padding: 2.25rem; margin-bottom: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1.5rem;">
+      <div style="max-width: 760px;">
+        <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.5rem;">
+          <span class="badge badge-soft-blue" style="font-size: 0.8rem; font-weight: 700;">AICTE Approved & TGCHE Affiliated</span>
+          <span class="badge badge-verified">Dual Admission: EAPCET & ECET Lateral Entry</span>
+        </div>
+        <h1 style="font-size: 2.2rem; color: var(--navy-heading); margin-bottom: 0.75rem; line-height: 1.25;">
+          B.Tech & Engineering Colleges in Telangana
+        </h1>
+        <p style="color: var(--text-muted); font-size: 1rem; line-height: 1.6;">
+          Browse engineering institutions in the directory. Programme, fee, admission and placement details are shown only where the record includes a source; confirm current admissions through official counselling notices.
+        </p>
+      </div>
+
+      <!-- Quick Action / TAFRC Fee Pill -->
+      <div style="background: #FFFFFF; border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 1.25rem; min-width: 250px; text-align: center; box-shadow: var(--shadow-sm);">
+        <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Fee information</div>
+        <div style="font-size: 1.1rem; font-weight: 800; color: var(--lilac-deep); margin: 4px 0;">Source-linked records</div>
+        <div style="font-size: 0.75rem; color: var(--text-muted);">Check the year and official source</div>
+        <div style="margin-top: 0.75rem;">
+          <a href="{{ url_for('recommendations') }}" class="btn btn-primary btn-sm" style="width: 100%;">AI College Matcher →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Stats Pills -->
+    <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1.25rem;">
+      <div style="font-size: 0.85rem; color: var(--navy-heading);">
+        <strong>🏛️ {{ total_count }}</strong> Engineering institutions listed
+      </div>
+      <div style="font-size: 0.85rem; color: var(--navy-heading);">
+        <strong>💻 {{ branches|length }}</strong> Engineering Disciplines (AIML, CSE, ECE, etc.)
+      </div>
+      <div style="font-size: 0.85rem; color: var(--navy-heading);">
+        <strong>🎯 Admission Pathways:</strong> TS EAPCET (1st Year) & TS ECET (2nd Year Lateral Entry)
+      </div>
+      <div style="font-size: 0.85rem; color: var(--navy-heading);">
+        <strong>🛡️ Transparency:</strong> Zero Unverified Placement Claims
+      </div>
+    </div>
+  </div>
+
+  <div class="directory-layout">
+    <!-- Filter Sidebar -->
+    <aside class="filter-sidebar">
+      <div class="filter-title">
+        <span>B.Tech Filters</span>
+        <a href="{{ url_for('engineering_page') }}" style="font-size: 0.8rem; color: #DB2777; font-weight: 600;">Reset Filters</a>
+      </div>
+
+      <form action="{{ url_for('engineering_page') }}" method="GET">
+        <!-- Search Keyword -->
+        <div class="filter-group">
+          <label class="filter-label" for="engSearch">Keyword Search</label>
+          <input 
+            type="text" 
+            name="search" 
+            id="engSearch" 
+            class="form-input" 
+            placeholder="e.g. OUCE, CBIT, AIML, VNR..." 
+            value="{{ active_filters.search }}"
+          >
+        </div>
+
+        <!-- District Filter -->
+        <div class="filter-group">
+          <label class="filter-label" for="engDistrict">District</label>
+          <select name="district" id="engDistrict" class="filter-select" onchange="this.form.submit()">
+            <option value="All">All Districts</option>
+            {% for d in districts %}
+              <option value="{{ d }}" {% if active_filters.district == d %}selected{% endif %}>{{ d }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Branch / Discipline -->
+        <div class="filter-group">
+          <label class="filter-label" for="engBranch">Branch / Discipline</label>
+          <select name="branch" id="engBranch" class="filter-select" onchange="this.form.submit()">
+            <option value="All">All Engineering Branches</option>
+            {% for b in branches %}
+              <option value="{{ b.branch_code }}" {% if active_filters.branch == b.branch_code %}selected{% endif %}>
+                {{ b.branch_name }} ({{ b.branch_code }})
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Management Type -->
+        <div class="filter-group">
+          <label class="filter-label" for="engMgmt">Autonomous / University Status</label>
+          <select name="management_type" id="engMgmt" class="filter-select" onchange="this.form.submit()">
+            <option value="All">All Types</option>
+            {% for m in mgmt_types %}
+              <option value="{{ m }}" {% if active_filters.management_type == m %}selected{% endif %}>{{ m }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Max Tuition Fee -->
+        <div class="filter-group">
+          <label class="filter-label" for="engMaxFee">Max Annual Tuition Fee</label>
+          <select name="max_fee" id="engMaxFee" class="filter-select" onchange="this.form.submit()">
+            <option value="">Any Budget</option>
+            <option value="40000" {% if active_filters.max_fee == '40000' %}selected{% endif %}>Under ₹40,000 (Govt Subsidized)</option>
+            <option value="100000" {% if active_filters.max_fee == '100000' %}selected{% endif %}>Under ₹1,00,000</option>
+            <option value="125000" {% if active_filters.max_fee == '125000' %}selected{% endif %}>Under ₹1,25,000</option>
+            <option value="150000" {% if active_filters.max_fee == '150000' %}selected{% endif %}>Under ₹1,50,000</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+          Apply Filters
+        </button>
+      </form>
+
+      <!-- Advice Box -->
+      <div style="background: var(--light-blue); border: 1px solid var(--pastel-blue); border-radius: var(--radius-md); padding: 1rem; margin-top: 1.5rem; font-size: 0.85rem; color: var(--navy-heading);">
+        <strong style="display:block; margin-bottom: 4px;">🎯 Diploma Lateral Entry Note:</strong>
+        TS ECET diploma candidates receive 10% supernumerary quota in all accredited B.Tech branches. University colleges like OUCE and JNTUH require single/double-digit branch ranks.
+      </div>
+    </aside>
+
+    <!-- Main Results Area -->
+    <main>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+        <span style="font-size: 0.95rem; color: var(--text-muted);">
+          Showing <strong>{{ total_count }}</strong> verified engineering colleges
+        </span>
+        <div style="display: flex; gap: 0.5rem;">
+          <a href="{{ url_for('recommendations') }}" class="btn btn-primary btn-sm">Get AI Recommendations</a>
+          <a href="{{ url_for('colleges_directory') }}" class="btn btn-secondary btn-sm">All Colleges</a>
+        </div>
+      </div>
+
+      {% if colleges and colleges|length > 0 %}
+        <div class="college-grid">
+          {% for col in colleges %}
+            <article class="college-card">
+              <div class="card-header-row">
+                <span class="college-code-pill">{{ col.college_code }}</span>
+                <span class="badge {% if col.management_type == 'University' %}badge-lavender{% elif 'Autonomous' in (col.management_type or '') %}badge-verified{% else %}badge-soft-blue{% endif %}">
+                  {{ col.management_type or col.institution_type }}
+                </span>
+                {% if col.naac_grade %}
+                  <span class="badge badge-soft-pink">NAAC {{ col.naac_grade }}</span>
+                {% endif %}
+              </div>
+
+              <h3 class="college-card-title">
+                <a href="{{ url_for('college_detail', college_id=col.id) }}">
+                  {{ col.name }}
+                </a>
+              </h3>
+
+              <div class="college-card-meta">
+                <span>📍 {{ col.district }}</span>
+                <span>•</span>
+                <span>📅 Est. {{ col.est_year or 'N/A' }}</span>
+                {% if col.hostel_available %}
+                  <span>•</span>
+                  <span style="color: #1E6B47; font-weight: 600;">🏠 Hostel</span>
+                {% endif %}
+              </div>
+
+              <!-- Key Metrics Grid -->
+              <div class="metrics-grid">
+                <div class="metric-box">
+                  <span class="metric-label">Annual Tuition Fee</span>
+                  <span class="metric-val" style="color: #0284C7;">
+          {% if col.annual_tuition_fee and col.metrics_verification_status == 'Verified' and col.metrics_source_url and col.metrics_academic_year %}
+                      ₹{{ "{:,.0f}".format(col.annual_tuition_fee) }}
+                    {% else %}
+                      <span style="font-size: 0.8rem; color: var(--text-muted);">Unverified</span>
+                    {% endif %}
+                  </span>
+                </div>
+                <div class="metric-box">
+                  <span class="metric-label">Avg Package / Placement</span>
+                  <span class="metric-val" style="color: #1E6B47;">
+                    {% if col.average_package and col.metrics_verification_status == 'Verified' and col.metrics_source_url and col.metrics_academic_year %}
+                      {{ col.average_package }} LPA
+                      <span style="font-size: 0.7rem; color: var(--text-muted);">({{ col.placement_percentage or 'N/A' }}%)</span>
+                    {% else %}
+                      <span style="font-size: 0.8rem; color: var(--text-muted);">Under Audit</span>
+                    {% endif %}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Branches Preview -->
+              <div class="branches-preview-wrap">
+                <span style="font-size: 0.725rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; display: block; margin-bottom: 4px;">
+                  B.Tech Engineering Specialisations:
+                </span>
+                <div class="branch-chips-list">
+                  {% for b in col.branches %}
+                    <span class="branch-chip" title="{{ b.branch_name }} ({{ b.branch_code }}) — {{ b.degree_level or 'B.Tech' }}">
+                      {{ b.branch_code }}
+                    </span>
+                  {% endfor %}
+                </div>
+              </div>
+
+              <!-- Card Actions -->
+              <div class="card-action-footer">
+                <a href="{{ url_for('college_detail', college_id=col.id) }}" class="btn btn-primary btn-sm" style="flex: 1;">
+                  View Full Profile →
+                </a>
+                <button 
+                  type="button" 
+                  class="btn btn-secondary btn-sm" 
+                  onclick="CompareManager.add({{ col.id }}, '{{ col.college_code }}')"
+                  title="Add to compare tray"
+                >
+                  + Compare
+                </button>
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="card empty-state-box">
+          <div style="font-size: 3rem; margin-bottom: 1rem;">💻</div>
+          <h3 style="font-size: 1.4rem; color: var(--navy-heading); margin-bottom: 0.5rem;">No Engineering Colleges Matched</h3>
+          <p style="color: var(--text-muted); margin-bottom: 1.5rem; max-width: 480px; margin-left: auto; margin-right: auto;">
+            We couldn't find any engineering colleges matching your active filter criteria. Try resetting filters or adjusting budget limit.
+          </p>
+          <a href="{{ url_for('engineering_page') }}" class="btn btn-primary">Reset Engineering Filters</a>
+        </div>
+      {% endif %}
+    </main>
+  </div>
+</div>
+{% endblock %}

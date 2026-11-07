@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Darpan AI Assistant — College Guidance Chatbot{% endblock %}
+
+{% block content %}
+<div class="container" style="margin-top: 2rem;">
+  <div style="text-align: center; max-width: 680px; margin: 0 auto 1.5rem;">
+    <span class="badge badge-soft-pink" style="margin-bottom: 0.4rem;">Offline-Capable Assistant</span>
+    <h1 style="font-size: 2.2rem; color: #111827; margin-bottom: 0.35rem;">Darpan AI Assistant</h1>
+    <p style="color: var(--text-muted); font-size: 0.95rem;">
+      Your transparent guidance companion for Telangana engineering admissions. Ask natural questions backed by our verified institutional database.
+    </p>
+  </div>
+
+  <!-- Full Page Chatbot Container -->
+  <div class="full-chat-wrapper">
+    <!-- Chat Header -->
+    <div style="background: var(--hero-gradient); padding: 1rem 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between;">
+      <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <div style="width: 42px; height: 42px; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; box-shadow: var(--shadow-sm);">
+          🤖
+        </div>
+        <div>
+          <strong style="color: #111827; font-size: 1rem;">Darpan AI Assistant</strong>
+          <div style="font-size: 0.75rem; color: #1E6B47; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+            <span style="display:inline-block; width:7px; height:7px; border-radius:50%; background:#10B981;"></span> Online (Local Rule-Backed & DB-Powered)
+          </div>
+        </div>
+      </div>
+
+      <div style="font-size: 0.8rem; color: var(--text-muted);">
+        No external API keys required
+      </div>
+    </div>
+
+    <!-- Chat Messages Scroll Container -->
+    <div class="chat-messages-container" id="fullChatMessages" style="padding: 1.75rem;">
+      <!-- Welcome Message Bubble -->
+      <div class="chat-bubble chat-bubble-assistant">
+        Hello! I am <strong>Darpan Assistant</strong>, a local rule-based guide. I search the College Darpan directory and point to source-linked records. I do not generate answers from an external AI model, and I leave unsupported fees, cutoffs, and placement figures unanswered.<br/><br/>
+        How can I help guide your college selection? Here are popular questions you can ask:
+        
+        <div style="margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px;">
+          <button class="quick-action-pill" onclick="sendChatPrompt('Which colleges offer AIML in Hyderabad?')">
+            Which colleges offer AIML in Hyderabad?
+          </button>
+          <button class="quick-action-pill" onclick="sendChatPrompt('Suggest colleges within my tuition budget of 1 lakh')">
+            Colleges under ₹1.0 Lakh Fee
+          </button>
+          <button class="quick-action-pill" onclick="sendChatPrompt('Compare OU and Geethanjali College')">
+            Compare OU & Geethanjali
+          </button>
+          <button class="quick-action-pill" onclick="sendChatPrompt('Which colleges should I investigate for ECET lateral entry?')">
+            ECET Lateral Entry for Diploma
+          </button>
+          <button class="quick-action-pill" onclick="sendChatPrompt('What is the difference between ECET and EAPCET?')">
+            Difference between ECET & EAPCET
+          </button>
+          <button class="quick-action-pill" onclick="sendChatPrompt('What factors should I consider when choosing a college?')">
+            Factors to Consider in College Selection
+          </button>
+          <button class="quick-action-pill" onclick="sendChatPrompt('Which college information is still unverified?')">
+            Which data is still unverified?
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat Input Area -->
+    <div class="chat-input-area" style="padding: 1rem 1.5rem;">
+      <input 
+        type="text" 
+        class="chat-text-input" 
+        id="fullChatInput" 
+        placeholder="Ask anything: e.g. 'Compare CBIT and Vasavi', 'Colleges with high placements', 'Fees for VNR'..."
+        autocomplete="off"
+      >
+      <button class="btn btn-primary" id="fullChatSendBtn" style="border-radius: var(--radius-full); padding: 0.65rem 1.5rem;">
+        Send Question
+      </button>
+    </div>
+  </div>
+</div>
+{% endblock %}
